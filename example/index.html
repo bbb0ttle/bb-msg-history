@@ -75,10 +75,8 @@
     }
 
     .card {
-      border: 1px solid #f3f4f6;
       border-radius: 8px;
       padding: 4px;
-      background: #fafafa;
       margin-bottom: 16px;
     }
 
@@ -104,21 +102,27 @@
   <div class="wrap">
     <header>
       <h1>&lt;bb-msg-history /&gt;</h1>
-      <p class="lead">A minimal chat-style message history web component.</p>
+      <p class="lead">A chat-style message history web component.</p>
     </header>
 
     <section>
       <h2>Basic Usage</h2>
-      <div class="">
+      <div class="card">
         <bb-msg-history>
           - bbki.ng: 谁呀？
+          - bbki.ng: foo
+          - bbki.ng: bar
           - xwy: 谁谁谁，你猴爷爷！
+          - bbki.ng: foo
+          - xwy: bar
         </bb-msg-history>
       </div>
 
       <pre><code>&lt;bb-msg-history&gt;
-  - bbki.ng: hello
-  - xwy: world
+  - bbki.ng: 谁呀？
+  - bbki.ng: foo
+  - bbki.ng: bar
+  - xwy: 谁谁谁，你猴爷爷！
   - bbki.ng: foo
   - xwy: bar
 &lt;/bb-msg-history&gt;</code></pre>

@@ -66,6 +66,9 @@ const AUTHOR_CONFIG: Record<string, Omit<AuthorConfig, 'isCustomAvatar'>> = {
   }
 };
 
+// 使用首字符头像的作者（非 bbki.ng / xwy）
+const FIRST_CHAR_AVATAR_AUTHORS = new Set(['小乌鸦']);
+
 class BBMsgHistory extends HTMLElement {
   private _resizeObserver?: ResizeObserver;
 
@@ -118,6 +121,16 @@ class BBMsgHistory extends HTMLElement {
   }
 
   private getAuthorConfig(author: string): AuthorConfig {
+    // 使用首字符头像的作者
+    if (FIRST_CHAR_AVATAR_AUTHORS.has(author)) {
+      const config = AUTHOR_CONFIG[author];
+      const firstChar = author.charAt(0);
+      return {
+        ...(config || { bubbleColor: THEME.gray[50], textColor: THEME.gray[900], side: 'left' as const }),
+        avatar: this._generateLetterAvatar(firstChar),
+        isCustomAvatar: false
+      };
+    }
     // 精确匹配
     if (AUTHOR_CONFIG[author]) {
       return { ...AUTHOR_CONFIG[author], isCustomAvatar: true };
@@ -149,7 +162,7 @@ class BBMsgHistory extends HTMLElement {
       display: flex; 
       align-items: center; 
       justify-content: center; 
-      background: ${THEME.gray[200]}; 
+      background: #ffffff; 
       color: ${THEME.gray[600]}; 
       font-size: 14px; 
       font-weight: 600;
@@ -228,7 +241,7 @@ class BBMsgHistory extends HTMLElement {
           max-height: 600px;
           overflow-y: auto;
           scroll-behavior: smooth;
-          background-color: var(--bb-bg-color);
+          background-color: transparent;
           border-radius: 0.5rem;
         }
 
@@ -279,7 +292,7 @@ class BBMsgHistory extends HTMLElement {
           height: 1.75rem;
           border-radius: 50%;
           overflow: hidden;
-          background: ${THEME.gray[100]};
+          background: #ffffff;
           cursor: help;
           transition: transform 0.15s ease;
         }
@@ -356,12 +369,9 @@ class BBMsgHistory extends HTMLElement {
           font-size: 0.9375rem;
           line-height: 1.5;
           word-wrap: break-word;
+          overflow-wrap: anywhere;
+          word-break: break-word;
           border-radius: 1rem;
-          transition: transform 0.1s ease;
-        }
-
-        .msg-bubble:hover {
-          transform: scale(1.01);
         }
 
         /* 左侧气泡 */
@@ -427,7 +437,7 @@ class BBMsgHistory extends HTMLElement {
           }
           
           .avatar-wrapper {
-            background: ${THEME.gray[700]};
+            background: #ffffff;
           }
           
           .avatar-tooltip {

@@ -16,26 +16,26 @@ CDN:
 
 ## Usage
 
-Place messages inside the element using the `- author: text` format, one per line:
+Place messages inside the element using the `author: text` format, one per line:
 
 ```html
 <bb-msg-history>
-  - alice: Hey, are you free this weekend?
-  - bob: Sounds good! When?
-  - alice: Saturday morning, around 10?
-  - bob: Perfect. See you then!
+  alice: Hey, are you free this weekend?
+  bob: Sounds good! When?
+  alice: Saturday morning, around 10?
+  bob: Perfect. See you then!
 </bb-msg-history>
 ```
 
 ## Message Format
 
-Each message is a line starting with `- `, followed by the author name, a colon, and the message text:
+Each message is a line with the author name, a colon, and the message text:
 
 ```
-- <author>: <message text>
+<author>: <message text>
 ```
 
-Lines that do not follow this format are ignored.
+Blank lines and lines without a colon are ignored.
 
 ## Built-in Authors
 
@@ -66,10 +66,10 @@ Any other author name is placed on the **left** side and receives a letter avata
 
 ```html
 <bb-msg-history>
-  - bbki.ng: 谁呀？
-  - xwy: 谁谁谁，你猴爷爷！
-  - bbki.ng: foo
-  - xwy: bar
+  bbki.ng: 谁呀？
+  xwy: 谁谁谁，你猴爷爷！
+  bbki.ng: foo
+  xwy: bar
 </bb-msg-history>
 ```
 
@@ -79,9 +79,9 @@ Authors not listed in the built-in config receive a letter avatar and appear on 
 
 ```html
 <bb-msg-history>
-  - alice: Hey!
-  - bob: Hi there!
-  - alice: How are you?
+  alice: Hey!
+  bob: Hi there!
+  alice: How are you?
 </bb-msg-history>
 ```
 
@@ -95,11 +95,11 @@ Authors not listed in the built-in config receive a letter avatar and appear on 
 </head>
 <body>
   <bb-msg-history>
-    - alice: Hey, are you free this weekend?
-    - bob: Yeah, what's up?
-    - alice: Want to grab coffee?
-    - bob: Sounds good! Saturday morning?
-    - alice: Perfect, see you then!
+    alice: Hey, are you free this weekend?
+    bob: Yeah, what's up?
+    alice: Want to grab coffee?
+    bob: Sounds good! Saturday morning?
+    alice: Perfect, see you then!
   </bb-msg-history>
 </body>
 </html>

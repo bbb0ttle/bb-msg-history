@@ -103,14 +103,13 @@ class BBMsgHistory extends HTMLElement {
     
     for (const line of raw.split('\n')) {
       const trimmed = line.trim();
-      if (!trimmed.startsWith('- ')) continue;
+      if (!trimmed) continue;
       
-      const content = trimmed.slice(2).trim();
-      const colonIdx = content.indexOf(':');
+      const colonIdx = trimmed.indexOf(':');
       if (colonIdx <= 0) continue;
       
-      const author = content.slice(0, colonIdx).trim();
-      const text = content.slice(colonIdx + 1).trim();
+      const author = trimmed.slice(0, colonIdx).trim();
+      const text = trimmed.slice(colonIdx + 1).trim();
       
       if (author && text) {
         messages.push({ author, text });
@@ -204,7 +203,7 @@ class BBMsgHistory extends HTMLElement {
         `;
         
         return `
-          <div class="msg-row msg-row--${side} ${isSubsequent ? 'msg-row--subsequent' : ''}">
+          <div class="msg-row msg-row--${side} ${isSubsequent ? 'msg-row--subsequent' : 'msg-row--new-author'}">
             ${side === 'left' ? avatarHtml : ''}
             
             <div class="msg-content">
@@ -282,6 +281,14 @@ class BBMsgHistory extends HTMLElement {
 
         .msg-row--subsequent {
           margin-top: 0.125rem;
+        }
+
+        .msg-row--new-author {
+          margin-top: 0.75rem;
+        }
+
+        .msg-row--new-author:first-child {
+          margin-top: 0;
         }
 
         /* 头像容器 */

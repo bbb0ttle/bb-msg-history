@@ -1,6 +1,7 @@
 interface Message {
   author: string;
   text: string;
+  parseError?: boolean;
 }
 
 interface AuthorConfig {
@@ -106,13 +107,18 @@ class BBMsgHistory extends HTMLElement {
       if (!trimmed) continue;
       
       const colonIdx = trimmed.indexOf(':');
-      if (colonIdx <= 0) continue;
+      if (colonIdx <= 0) {
+        messages.push({ author: '', text: trimmed, parseError: true });
+        continue;
+      }
       
       const author = trimmed.slice(0, colonIdx).trim();
       const text = trimmed.slice(colonIdx + 1).trim();
       
       if (author && text) {
         messages.push({ author, text });
+      } else {
+        messages.push({ author: '', text: trimmed, parseError: true });
       }
     }
     
@@ -185,7 +191,11 @@ class BBMsgHistory extends HTMLElement {
 
     let lastAuthor = '';
     const messagesHtml = messages
-      .map(({ author, text }) => {
+      .map(({ author, text, parseError }) => {
+        if (parseError) {
+          return `<div class="msg-raw">${this.escapeHtml(text)}</div>`;
+        }
+
         const config = this.getAuthorConfig(author);
         const isFirstFromAuthor = author !== lastAuthor;
         lastAuthor = author;
@@ -392,6 +402,15 @@ class BBMsgHistory extends HTMLElement {
           /* 移除边框 */
         }
 
+        /* 原始文本（解析失败的行） */
+        .msg-raw {
+          font-size: 0.9375rem;
+          line-height: 1.5;
+          color: ${THEME.gray[600]};
+          padding: 0.125rem 0;
+          word-break: break-word;
+        }
+
         /* 空状态 */
         .empty-state {
           text-align: center;
@@ -450,6 +469,10 @@ class BBMsgHistory extends HTMLElement {
           
           .avatar-tooltip::after {
             border-top-color: ${THEME.gray[200]};
+          }
+
+          .msg-raw {
+            color: ${THEME.gray[400]};
           }
         }
 

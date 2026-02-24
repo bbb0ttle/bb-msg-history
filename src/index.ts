@@ -233,7 +233,6 @@ class BBMsgHistory extends HTMLElement {
         .history {
           max-width: 640px;
           margin: 0 auto;
-          padding: 1rem;
           display: flex;
           flex-direction: column;
           gap: 0.25rem;
@@ -403,7 +402,6 @@ class BBMsgHistory extends HTMLElement {
         /* 移动端 */
         @media (max-width: 480px) {
           .history {
-            padding: 0.75rem;
             max-height: 70vh;
           }
           

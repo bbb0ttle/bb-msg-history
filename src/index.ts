@@ -25,9 +25,6 @@ const THEME = {
     800: '#1f2937',
     900: '#111827',
   },
-  blue: {
-    600: '#000000',
-  },
   red: {
     50: '#fef2f2',
     100: '#fee2e2',
@@ -70,7 +67,7 @@ const AUTHOR_CONFIG: Record<string, Omit<AuthorConfig, 'isCustomAvatar'>> = {
 const FIRST_CHAR_AVATAR_AUTHORS = new Set(['小乌鸦']);
 
 class BBMsgHistory extends HTMLElement {
-  private _resizeObserver?: ResizeObserver;
+  private _mutationObserver?: MutationObserver;
 
   constructor() {
     super();
@@ -79,23 +76,25 @@ class BBMsgHistory extends HTMLElement {
 
   connectedCallback() {
     this.render();
-    this._setupResizeObserver();
+    this._setupMutationObserver();
   }
 
   disconnectedCallback() {
-    this._resizeObserver?.disconnect();
+    this._mutationObserver?.disconnect();
   }
 
-  private _setupResizeObserver() {
-    if ('ResizeObserver' in window) {
-      this._resizeObserver = new ResizeObserver(() => {
-        this._adjustLayout();
-      });
-      this._resizeObserver.observe(this);
-    }
+  private _setupMutationObserver() {
+    let debounceTimer: ReturnType<typeof setTimeout>;
+    this._mutationObserver = new MutationObserver(() => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => this.render(), 50);
+    });
+    this._mutationObserver.observe(this, {
+      childList: true,
+      characterData: true,
+      subtree: true,
+    });
   }
-
-  private _adjustLayout() {}
 
   private parseMessages(): Message[] {
     const raw = this.textContent || '';
@@ -134,9 +133,9 @@ class BBMsgHistory extends HTMLElement {
     if (AUTHOR_CONFIG[author]) {
       return { ...AUTHOR_CONFIG[author], isCustomAvatar: true };
     }
-    // 模糊匹配
+    // 模糊匹配：仅当作者名包含内置 key 时复用配置
     for (const [key, config] of Object.entries(AUTHOR_CONFIG)) {
-      if (author.includes(key) || key.includes(author)) {
+      if (author.includes(key)) {
         return { ...config, isCustomAvatar: true };
       }
     }
@@ -170,9 +169,12 @@ class BBMsgHistory extends HTMLElement {
   }
 
   private escapeHtml(str: string): string {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 
   private render() {
@@ -228,6 +230,7 @@ class BBMsgHistory extends HTMLElement {
             "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
             "Noto Color Emoji";
           --bb-bg-color: ${THEME.gray[50]};
+          --bb-max-height: 600px;
         }
 
         .history {
@@ -236,7 +239,7 @@ class BBMsgHistory extends HTMLElement {
           display: flex;
           flex-direction: column;
           gap: 0.25rem;
-          max-height: 600px;
+          max-height: var(--bb-max-height, 600px);
           overflow-y: auto;
           scroll-behavior: smooth;
           background-color: transparent;
@@ -280,11 +283,9 @@ class BBMsgHistory extends HTMLElement {
           width: 1.75rem;
           height: 1.75rem;
           background: #ffffff;
+          border-radius: 50%;
+          overflow: hidden;
           cursor: help;
-        }
-
-        .avatar-wrapper:hover {
-          // transform: scale(1.1);
         }
 
         .avatar-wrapper--hidden {
@@ -318,7 +319,6 @@ class BBMsgHistory extends HTMLElement {
           white-space: nowrap;
           opacity: 0;
           visibility: hidden;
-          transform: translate(-50%, -100%);
           pointer-events: none;
           z-index: 10;
           font-weight: 500;
@@ -380,7 +380,7 @@ class BBMsgHistory extends HTMLElement {
         /* 移动端 */
         @media (max-width: 480px) {
           .history {
-            max-height: 70vh;
+            max-height: var(--bb-max-height, 70vh);
           }
           
           .msg-row {
@@ -398,6 +398,40 @@ class BBMsgHistory extends HTMLElement {
           }
         }
 
+        /* Dark mode */
+        @media (prefers-color-scheme: dark) {
+          :host {
+            --bb-bg-color: ${THEME.gray[900]};
+          }
+
+          .history {
+            background-color: transparent;
+          }
+
+          .msg-bubble {
+            color: ${THEME.gray[100]};
+          }
+
+          .msg-bubble--left {
+            background-color: ${THEME.gray[700]};
+            color: ${THEME.gray[100]};
+          }
+
+          .avatar-wrapper {
+            background: ${THEME.gray[800]};
+          }
+
+          .empty-state {
+            color: ${THEME.gray[500]};
+          }
+        }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+          .history {
+            scroll-behavior: auto;
+          }
+        }
 
       </style>
       <div class="history" role="log" aria-live="polite" aria-label="Message history">
@@ -417,9 +451,9 @@ class BBMsgHistory extends HTMLElement {
           const tooltip = wrapper.querySelector('.avatar-tooltip') as HTMLElement;
           if (!tooltip) return;
           const rect = wrapper.getBoundingClientRect();
-          tooltip.style.left = `${rect.left + rect.width / 2}px`;
-          tooltip.style.top = `${rect.top - 8}px`;
-          // transform is handled by CSS transition on hover
+          const tooltipRect = tooltip.getBoundingClientRect();
+          tooltip.style.left = `${rect.left + rect.width / 2 - tooltipRect.width / 2}px`;
+          tooltip.style.top = `${rect.top - tooltipRect.height - 8}px`;
         });
       });
     });
@@ -442,12 +476,20 @@ class BBMsgHistory extends HTMLElement {
   }
 }
 
+// 手动注册
+function define(tagName = 'bb-msg-history') {
+  if (!customElements.get(tagName)) {
+    customElements.define(tagName, tagName === 'bb-msg-history'
+      ? BBMsgHistory
+      : class extends BBMsgHistory {}
+    );
+  }
+}
+
 // 降级处理
 function initBBMsgHistory() {
   try {
-    if (!customElements.get('bb-msg-history')) {
-      customElements.define('bb-msg-history', BBMsgHistory);
-    }
+    define();
   } catch (error) {
     console.warn('BBMsgHistory registration failed, falling back to plain text:', error);
     
@@ -480,7 +522,7 @@ if (document.readyState === 'loading') {
   initBBMsgHistory();
 }
 
-export { BBMsgHistory };
+export { BBMsgHistory, define };
 
 declare global {
   interface HTMLElementTagNameMap {

@@ -26,7 +26,7 @@
   "scripts": {
     "start": "tsc -w",
     "preview": "python3 -m http.server 8000",
-    "prepare": "tsc -d && terser dist/index.js --compress --mangle -o dist/index.js"
+    "prepare": "tsc && cp dist/index.js dist/index.dev.js && terser dist/index.js --compress --mangle -o dist/index.js"
   },
   "publishConfig": {
     "access": "public"

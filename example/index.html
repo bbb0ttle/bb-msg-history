@@ -96,6 +96,17 @@
       background: #fff;
       border: 1px solid #eee;
     }
+
+    @media (prefers-color-scheme: dark) {
+      body { background: #111827; color: #e5e7eb; }
+      .lead { color: #9ca3af; }
+      h2 { color: #6b7280; }
+      code { background: #1f2937; color: #e5e7eb; }
+      pre { background: #1f2937; color: #e5e7eb; }
+      .install { background: #1f2937; }
+      .install p { color: #9ca3af; }
+      .install pre { background: #111827; border-color: #374151; }
+    }
   </style>
 </head>
 <body>
@@ -166,7 +177,7 @@
       <h2>Fuzzy matching — author name contains built-in key</h2>
       <div class="card">
         <bb-msg-history>
-          bbki.ng(�话): 这个名字包含 bbki.ng，所以用相同的头像和右侧布局
+          bbki.ng(电话): 这个名字包含 bbki.ng，所以用相同的头像和右侧布局
           xwy_bot: 这个名字包含 xwy，所以用粉色气泡和左侧布局
           bbki.ng: 原版作者
         </bb-msg-history>
@@ -246,6 +257,90 @@
           bbki.ng: 今天就到这里
         </bb-msg-history>
       </div>
+    </section>
+
+    <!-- 11. 自定义最大高度：通过 CSS 变量 --bb-max-height 控制 -->
+    <section>
+      <h2>Custom max-height — CSS variable</h2>
+      <div class="card">
+        <bb-msg-history style="--bb-max-height: 200px;">
+          alice: This container is only 200px tall
+          bob: So it should scroll sooner
+          alice: Let's add more messages
+          bob: To demonstrate the effect
+          alice: One more line
+          bob: And another
+          alice: Almost there
+          bob: Yep, scrolling now!
+          alice: Great, it works
+          bob: Nice and compact
+        </bb-msg-history>
+      </div>
+
+      <pre><code>&lt;bb-msg-history style="--bb-max-height: 200px;"&gt;
+  ...
+&lt;/bb-msg-history&gt;</code></pre>
+    </section>
+
+    <!-- 12. 动态更新：MutationObserver 自动重渲染 -->
+    <section>
+      <h2>Dynamic update — reactive content</h2>
+      <div class="card">
+        <bb-msg-history id="dynamic-demo" style="--bb-max-height: 200px;">
+          alice: Click the button below to add a message
+        </bb-msg-history>
+      </div>
+      <button id="add-msg-btn" style="
+        margin-top: 8px;
+        margin-bottom: 8px;
+        padding: 8px 16px;
+        font-size: 14px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background: #fafafa;
+        cursor: pointer;
+      ">Add message</button>
+      <script>
+        (() => {
+          const el = document.getElementById('dynamic-demo');
+          const btn = document.getElementById('add-msg-btn');
+          const authors = ['bob', 'charlie', 'alice'];
+          const msgs = [
+            'Hey, I was added dynamically!',
+            'Me too, via MutationObserver!',
+            'The component re-renders automatically',
+            'No manual refresh needed',
+            'Pretty cool, right?',
+          ];
+          let i = 0;
+          btn.addEventListener('click', () => {
+            const author = authors[i % authors.length];
+            const text = msgs[i % msgs.length];
+            el.textContent += `\n${author}: ${text}`;
+            i++;
+          });
+        })();
+      </script>
+
+      <pre><code>// Component auto re-renders when textContent changes
+const el = document.querySelector('bb-msg-history');
+el.textContent += '\nbob: Added dynamically!';</code></pre>
+    </section>
+
+    <!-- 13. Dark mode 预览 -->
+    <section>
+      <h2>Dark mode — prefers-color-scheme</h2>
+      <div class="card" style="background: #111827; padding: 16px; border-radius: 8px;">
+        <bb-msg-history style="color-scheme: dark;">
+          bbki.ng: Dark mode 下的对话
+          xwy: 会自动适配深色主题
+          bbki.ng: 气泡和背景都会变色
+          xwy: 好看！
+        </bb-msg-history>
+      </div>
+      <p style="margin-top: 12px; font-size: 13px; color: #999;">
+        ↑ Toggle your system to dark mode to see it in action across the whole page, or inspect this card which forces a dark background.
+      </p>
     </section>
 
     <section>

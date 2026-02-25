@@ -1,10 +1,9 @@
 declare class BBMsgHistory extends HTMLElement {
-    private _resizeObserver?;
+    private _mutationObserver?;
     constructor();
     connectedCallback(): void;
     disconnectedCallback(): void;
-    private _setupResizeObserver;
-    private _adjustLayout;
+    private _setupMutationObserver;
     private parseMessages;
     private getAuthorConfig;
     private _generateLetterAvatar;
@@ -12,7 +11,8 @@ declare class BBMsgHistory extends HTMLElement {
     private render;
     private _renderEmpty;
 }
-export { BBMsgHistory };
+declare function define(tagName?: string): void;
+export { BBMsgHistory, define };
 declare global {
     interface HTMLElementTagNameMap {
         'bb-msg-history': BBMsgHistory;

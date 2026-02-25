@@ -47,7 +47,35 @@ Blank lines and lines without a colon are ignored.
 
 Any other author name is placed on the **left** side and receives a letter avatar (first character of the name).
 
-If an author name _contains_ a built-in key (e.g. `bbki.ng(电话)` or `xwy_bot`), it will fuzzy-match and reuse that author's config.
+If an author name _contains_ a built-in key (e.g. `bbki.ng(电话)` or `xwy_bot`), it will fuzzy-match and reuse that author's config. Note: only the `author.includes(key)` direction is matched — a short author name won't accidentally match a longer built-in key.
+
+## Customization
+
+### CSS Custom Properties
+
+| Property | Default | Description |
+|----------|---------|-------------|
+| `--bb-max-height` | `600px` | Maximum height of the message container |
+
+```css
+bb-msg-history {
+  --bb-max-height: 400px;
+}
+```
+
+### Manual Registration
+
+By default, the component auto-registers as `<bb-msg-history>`. You can also register manually with a custom tag name:
+
+```js
+import { BBMsgHistory, define } from '@bbki.ng/bb-msg-history';
+
+// Register with default tag name
+define();
+
+// Or use a custom tag name
+define('my-chat-history');
+```
 
 ## Features
 
@@ -61,6 +89,8 @@ If an author name _contains_ a built-in key (e.g. `bbki.ng(电话)` or `xwy_bot`
 - Dark mode support via `prefers-color-scheme`
 - Mobile responsive layout
 - `prefers-reduced-motion` support
+- Reactive: automatically re-renders when content changes
+- Customizable max-height via `--bb-max-height` CSS custom property
 - Graceful degradation to `<pre>` when Custom Elements are unsupported
 
 ## Examples

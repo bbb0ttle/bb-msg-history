@@ -243,17 +243,6 @@ class BBMsgHistory extends HTMLElement {
           border-radius: 0.5rem;
         }
 
-        .history::-webkit-scrollbar {
-          width: 0.5rem;
-        }
-        .history::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .history::-webkit-scrollbar-thumb {
-          background-color: ${THEME.gray[300]};
-          border-radius: 0.25rem;
-        }
-
         /* 消息行布局 */
         .msg-row {
           display: flex;
@@ -296,15 +285,13 @@ class BBMsgHistory extends HTMLElement {
           flex-shrink: 0;
           width: 1.75rem;
           height: 1.75rem;
-          border-radius: 50%;
-          overflow: hidden;
           background: #ffffff;
           cursor: help;
           transition: transform 0.15s ease;
         }
 
         .avatar-wrapper:hover {
-          transform: scale(1.1);
+          // transform: scale(1.1);
         }
 
         .avatar-wrapper--hidden {
@@ -318,6 +305,8 @@ class BBMsgHistory extends HTMLElement {
           display: flex;
           align-items: center;
           justify-content: center;
+          border-radius: 50%;
+          overflow: hidden;
         }
 
         .avatar svg {
@@ -327,10 +316,7 @@ class BBMsgHistory extends HTMLElement {
 
         /* 悬浮显示名字 */
         .avatar-tooltip {
-          position: absolute;
-          bottom: calc(100% + 0.5rem);
-          left: 50%;
-          transform: translateX(-50%) scale(0.9);
+          position: fixed;
           padding: 0.25rem 0.5rem;
           background: ${THEME.gray[800]};
           color: ${THEME.gray[50]};
@@ -339,7 +325,8 @@ class BBMsgHistory extends HTMLElement {
           white-space: nowrap;
           opacity: 0;
           visibility: hidden;
-          transition: all 0.15s ease;
+          transform: translate(-50%, calc(-100% + 4px));
+          transition: opacity 0.15s ease, visibility 0.15s ease, transform 0.15s ease;
           pointer-events: none;
           z-index: 10;
           font-weight: 500;
@@ -349,7 +336,7 @@ class BBMsgHistory extends HTMLElement {
         .avatar-tooltip::after {
           content: '';
           position: absolute;
-          top: 100%;
+          top: calc(100% - 1px);
           left: 50%;
           transform: translateX(-50%);
           border: 4px solid transparent;
@@ -359,7 +346,7 @@ class BBMsgHistory extends HTMLElement {
         .avatar-wrapper:hover .avatar-tooltip {
           opacity: 1;
           visibility: visible;
-          transform: translateX(-50%) scale(1);
+          transform: translate(-50%, -100%);
         }
 
         /* 消息内容区 */
@@ -468,6 +455,18 @@ class BBMsgHistory extends HTMLElement {
       if (container) {
         container.scrollTop = container.scrollHeight;
       }
+
+      // Position tooltips dynamically on hover to avoid overflow clipping
+      this.shadowRoot!.querySelectorAll('.avatar-wrapper').forEach(wrapper => {
+        wrapper.addEventListener('mouseenter', () => {
+          const tooltip = wrapper.querySelector('.avatar-tooltip') as HTMLElement;
+          if (!tooltip) return;
+          const rect = wrapper.getBoundingClientRect();
+          tooltip.style.left = `${rect.left + rect.width / 2}px`;
+          tooltip.style.top = `${rect.top - 8}px`;
+          // transform is handled by CSS transition on hover
+        });
+      });
     });
   }
 

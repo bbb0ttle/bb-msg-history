@@ -105,31 +105,99 @@
       <p class="lead">A chat-style message history web component.</p>
     </header>
 
+    <!-- 1. 基本用法：内置作者 bbki.ng(右侧) 和 xwy(左侧) -->
     <section>
-      <h2>Basic Usage</h2>
+      <h2>Basic — built-in authors</h2>
       <div class="card">
         <bb-msg-history>
           bbki.ng: 谁呀？
-          bbki.ng: foo
-          bbki.ng: bar
           xwy: 谁谁谁，你猴爷爷！
-          bbki.ng: foo
-          xwy: bar
         </bb-msg-history>
       </div>
 
       <pre><code>&lt;bb-msg-history&gt;
   bbki.ng: 谁呀？
-  bbki.ng: foo
-  bbki.ng: bar
   xwy: 谁谁谁，你猴爷爷！
-  bbki.ng: foo
-  xwy: bar
 &lt;/bb-msg-history&gt;</code></pre>
     </section>
 
+    <!-- 2. 连续消息分组：同一作者连续发送，后续消息头像隐藏 -->
     <section>
-      <h2>Longer Conversation (Scrollable)</h2>
+      <h2>Consecutive messages — avatar grouping</h2>
+      <div class="card">
+        <bb-msg-history>
+          bbki.ng: 第一条
+          bbki.ng: 第二条，头像隐藏了
+          bbki.ng: 第三条，还是隐藏
+          xwy: 收到！
+          xwy: 我也连发两条
+        </bb-msg-history>
+      </div>
+    </section>
+
+    <!-- 3. 内置首字符头像作者：小乌鸦（使用首字符 + 自定义粉色气泡） -->
+    <section>
+      <h2>Built-in first-char avatar — 小乌鸦</h2>
+      <div class="card">
+        <bb-msg-history>
+          bbki.ng: 小乌鸦你好呀
+          小乌鸦: 你好！我用首字符当头像
+          小乌鸦: 但气泡颜色是自定义的粉色
+          bbki.ng: 好看！
+        </bb-msg-history>
+      </div>
+    </section>
+
+    <!-- 4. 未知作者：自动生成首字母头像，默认左侧显示 -->
+    <section>
+      <h2>Unknown authors — letter avatars</h2>
+      <div class="card">
+        <bb-msg-history>
+          alice: Hello!
+          bob: Hi there!
+          charlie: Hey everyone!
+          alice: Nice to meet you all
+        </bb-msg-history>
+      </div>
+    </section>
+
+    <!-- 5. 模糊匹配：作者名包含内置 key 时复用其配置 -->
+    <section>
+      <h2>Fuzzy matching — author name contains built-in key</h2>
+      <div class="card">
+        <bb-msg-history>
+          bbki.ng(�话): 这个名字包含 bbki.ng，所以用相同的头像和右侧布局
+          xwy_bot: 这个名字包含 xwy，所以用粉色气泡和左侧布局
+          bbki.ng: 原版作者
+        </bb-msg-history>
+      </div>
+    </section>
+
+    <!-- 6. 单条消息 -->
+    <section>
+      <h2>Single message</h2>
+      <div class="card">
+        <bb-msg-history>
+          bbki.ng: 就一条消息，也能正常渲染
+        </bb-msg-history>
+      </div>
+    </section>
+
+    <!-- 7. 长文本换行 -->
+    <section>
+      <h2>Long text — word wrap</h2>
+      <div class="card">
+        <bb-msg-history>
+          alice: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+          bob: 这是一段很长的中文消息，用来测试中文环境下的自动换行效果。消息气泡应该能够正确地处理长文本，不会溢出容器边界，同时保持良好的可读性和视觉效果。
+          alice: Superlongwordwithoutanyspacestotesttheoverflowwrapandwordbreakbehaviorofthemessagebubblecomponent
+        </bb-msg-history>
+      </div>
+    </section>
+
+    <!-- 8. 滚动长对话 -->
+    <section>
+      <h2>Scrollable long conversation</h2>
       <div class="card">
         <bb-msg-history>
           alice: Hey, are you free this weekend?
@@ -144,7 +212,38 @@
           bob: Me neither. It's been a while.
           alice: Way too long!
           bob: Agreed. See you Saturday.
-          alice: lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur
+          alice: I'll bring that book you wanted.
+          bob: Oh right! Thanks for remembering.
+          alice: No problem. See you!
+          bob: See ya!
+        </bb-msg-history>
+      </div>
+    </section>
+
+    <!-- 9. 空状态：无消息时显示 "No messages" -->
+    <section>
+      <h2>Empty state</h2>
+      <div class="card">
+        <bb-msg-history></bb-msg-history>
+      </div>
+
+      <pre><code>&lt;bb-msg-history&gt;&lt;/bb-msg-history&gt;</code></pre>
+    </section>
+
+    <!-- 10. 多人混合对话：内置作者 + 首字符作者 + 未知作者 -->
+    <section>
+      <h2>Multi-party mixed conversation</h2>
+      <div class="card">
+        <bb-msg-history>
+          bbki.ng: 大家好，开个会
+          xwy: 好的好的
+          小乌鸦: 来了来了
+          dave: 我也在
+          bbki.ng: 那我们开始吧
+          xwy: OK
+          小乌鸦: 没问题
+          dave: 收到
+          bbki.ng: 今天就到这里
         </bb-msg-history>
       </div>
     </section>

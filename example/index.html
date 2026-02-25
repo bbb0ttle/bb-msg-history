@@ -116,9 +116,9 @@
       <p class="lead">A chat-style message history web component.</p>
     </header>
 
-    <!-- 1. 基本用法：内置作者 bbki.ng(右侧) 和 xwy(左侧) -->
+    <!-- 0.  -->
     <section>
-      <h2>Basic — built-in authors</h2>
+      <h2>DEMO - svg avatar</h2>
       <div class="card">
         <bb-msg-history>
           bbki.ng: 谁呀？
@@ -132,31 +132,68 @@
 &lt;/bb-msg-history&gt;</code></pre>
     </section>
 
-    <!-- 2. 连续消息分组：同一作者连续发送，后续消息头像隐藏 -->
+    <!-- 1. 基本用法：默认首字母头像 -->
+    <section>
+      <h2>Basic — letter avatars</h2>
+      <div class="card">
+        <bb-msg-history>
+          alice: Hey, are you free this weekend?
+          bob: Sounds good! When?
+          alice: Saturday morning, around 10?
+          bob: Perfect. See you then!
+        </bb-msg-history>
+      </div>
+
+      <pre><code>&lt;bb-msg-history&gt;
+  alice: Hey, are you free this weekend?
+  bob: Sounds good! When?
+&lt;/bb-msg-history&gt;</code></pre>
+    </section>
+
+    <!-- 2. 自定义头像：emoji、img、side、颜色 -->
+    <section>
+      <h2>Custom avatars — setAuthor()</h2>
+      <div class="card">
+        <bb-msg-history id="custom-avatar-demo">
+          me: Hey there!
+          me: How's it going?
+          friend: Pretty good, thanks!
+          friend: What are you up to?
+          me: Just trying out this component
+          friend: Looks great!
+        </bb-msg-history>
+      </div>
+      <script>
+        customElements.whenDefined('bb-msg-history').then(() => {
+          const el = document.getElementById('custom-avatar-demo');
+          el.setAuthor('me', { avatar: '🐱', side: 'right', bubbleColor: '#f3f4f6' });
+          el.setAuthor('friend', { avatar: '🐶', side: 'left', bubbleColor: '#e0f2fe' });
+        });
+      </script>
+
+      <pre><code>el.setAuthor('me', { avatar: '🐱', side: 'right', bubbleColor: '#f3f4f6' });
+el.setAuthor('friend', { avatar: '🐶', side: 'left', bubbleColor: '#e0f2fe' });</code></pre>
+    </section>
+
+    <!-- 3. 连续消息分组：同一作者连续发送，后续消息头像隐藏 -->
     <section>
       <h2>Consecutive messages — avatar grouping</h2>
       <div class="card">
-        <bb-msg-history>
-          bbki.ng: 第一条
-          bbki.ng: 第二条，头像隐藏了
-          bbki.ng: 第三条，还是隐藏
-          xwy: 收到！
-          xwy: 我也连发两条
+        <bb-msg-history id="consecutive-demo">
+          alice: First message
+          alice: Second message, avatar hidden
+          alice: Third, still hidden
+          bob: Got it!
+          bob: I'll send two as well
         </bb-msg-history>
       </div>
-    </section>
-
-    <!-- 3. 内置首字符头像作者：小乌鸦（使用首字符 + 自定义粉色气泡） -->
-    <section>
-      <h2>Built-in first-char avatar — 小乌鸦</h2>
-      <div class="card">
-        <bb-msg-history>
-          bbki.ng: 小乌鸦你好呀
-          小乌鸦: 你好！我用首字符当头像
-          小乌鸦: 但气泡颜色是自定义的粉色
-          bbki.ng: 好看！
-        </bb-msg-history>
-      </div>
+      <script>
+        customElements.whenDefined('bb-msg-history').then(() => {
+          const el = document.getElementById('consecutive-demo');
+          el.setAuthor('alice', { avatar: '👩', side: 'right' });
+          el.setAuthor('bob', { avatar: '👨', side: 'left', bubbleColor: '#ecfdf5' });
+        });
+      </script>
     </section>
 
     <!-- 4. 未知作者：自动生成首字母头像，默认左侧显示 -->
@@ -172,16 +209,27 @@
       </div>
     </section>
 
-    <!-- 5. 模糊匹配：作者名包含内置 key 时复用其配置 -->
+    <!-- 5. 模糊匹配：作者名包含已配置 key 时复用配置 -->
     <section>
-      <h2>Fuzzy matching — author name contains built-in key</h2>
+      <h2>Fuzzy matching — author name contains configured key</h2>
       <div class="card">
-        <bb-msg-history>
-          bbki.ng(电话): 这个名字包含 bbki.ng，所以用相同的头像和右侧布局
-          xwy_bot: 这个名字包含 xwy，所以用粉色气泡和左侧布局
-          bbki.ng: 原版作者
+        <bb-msg-history id="fuzzy-demo">
+          alice: Normal message from alice
+          alice(phone): This name contains "alice", reuses her config
+          alice_work: This too!
+          bob: Just bob
         </bb-msg-history>
       </div>
+      <script>
+        customElements.whenDefined('bb-msg-history').then(() => {
+          const el = document.getElementById('fuzzy-demo');
+          el.setAuthor('alice', { avatar: '👩', side: 'right', bubbleColor: '#e0f2fe' });
+          el.setAuthor('bob', { avatar: '👨', side: 'left' });
+        });
+      </script>
+
+      <pre><code>// "alice(phone)" and "alice_work" fuzzy-match "alice"
+el.setAuthor('alice', { avatar: '👩', side: 'right', bubbleColor: '#fef3c7' });</code></pre>
     </section>
 
     <!-- 6. 单条消息 -->
@@ -189,7 +237,7 @@
       <h2>Single message</h2>
       <div class="card">
         <bb-msg-history>
-          bbki.ng: 就一条消息，也能正常渲染
+          alice: Just one message, renders fine
         </bb-msg-history>
       </div>
     </section>
@@ -241,22 +289,30 @@
       <pre><code>&lt;bb-msg-history&gt;&lt;/bb-msg-history&gt;</code></pre>
     </section>
 
-    <!-- 10. 多人混合对话：内置作者 + 首字符作者 + 未知作者 -->
+    <!-- 10. 多人混合对话 -->
     <section>
       <h2>Multi-party mixed conversation</h2>
       <div class="card">
-        <bb-msg-history>
-          bbki.ng: 大家好，开个会
-          xwy: 好的好的
-          小乌鸦: 来了来了
-          dave: 我也在
-          bbki.ng: 那我们开始吧
-          xwy: OK
-          小乌鸦: 没问题
-          dave: 收到
-          bbki.ng: 今天就到这里
+        <bb-msg-history id="multi-party-demo">
+          me: Hey everyone, let's have a meeting
+          alice: Sure thing
+          bob: On my way
+          dave: I'm here too
+          me: Let's get started
+          alice: OK
+          bob: No problem
+          dave: Got it
+          me: That's all for today
         </bb-msg-history>
       </div>
+      <script>
+        customElements.whenDefined('bb-msg-history').then(() => {
+          const el = document.getElementById('multi-party-demo');
+          el.setAuthor('me', { avatar: '😎', side: 'right' });
+          el.setAuthor('alice', { avatar: '👩', side: 'left', bubbleColor: '#e0f2fe' });
+          el.setAuthor('bob', { avatar: '👨', side: 'left', bubbleColor: '#ecfdf5' });
+        });
+      </script>
     </section>
 
     <!-- 11. 自定义最大高度：通过 CSS 变量 --bb-max-height 控制 -->
@@ -331,11 +387,11 @@ el.textContent += '\nbob: Added dynamically!';</code></pre>
     <section>
       <h2>Dark mode — prefers-color-scheme</h2>
       <div class="card" style="background: #111827; padding: 16px; border-radius: 8px;">
-        <bb-msg-history style="color-scheme: dark;">
-          bbki.ng: Dark mode 下的对话
-          xwy: 会自动适配深色主题
-          bbki.ng: 气泡和背景都会变色
-          xwy: 好看！
+        <bb-msg-history id="dark-demo" style="color-scheme: dark;">
+          alice: Dark mode conversation
+          bob: Adapts to dark theme automatically
+          alice: Bubbles and backgrounds change
+          bob: Nice!
         </bb-msg-history>
       </div>
       <p style="margin-top: 12px; font-size: 13px; color: #999;">

@@ -11,6 +11,17 @@ interface AuthorConfig {
   isCustomAvatar: boolean;
 }
 
+interface AuthorOptions {
+  /** Avatar HTML string: SVG, <img>, emoji, or plain text */
+  avatar?: string;
+  /** Which side the messages appear on */
+  side?: 'left' | 'right';
+  /** Bubble background color */
+  bubbleColor?: string;
+  /** Text color inside bubble */
+  textColor?: string;
+}
+
 // 主题色板
 const THEME = {
   gray: {
@@ -68,10 +79,34 @@ const FIRST_CHAR_AVATAR_AUTHORS = new Set(['小乌鸦']);
 
 class BBMsgHistory extends HTMLElement {
   private _mutationObserver?: MutationObserver;
+  private _userAuthors = new Map<string, AuthorOptions>();
 
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
+  }
+
+  /**
+   * Configure an author's avatar, side, and colors.
+   * Call before or after rendering — the component re-renders automatically.
+   *
+   * @example
+   * el.setAuthor('alice', { avatar: '🐱', side: 'right', bubbleColor: '#e0f2fe' });
+   * el.setAuthor('bob', { avatar: '<img src="bob.png" />', side: 'left' });
+   */
+  setAuthor(name: string, options: AuthorOptions): this {
+    this._userAuthors.set(name, options);
+    this.render();
+    return this;
+  }
+
+  /**
+   * Remove a previously set author config.
+   */
+  removeAuthor(name: string): this {
+    this._userAuthors.delete(name);
+    this.render();
+    return this;
   }
 
   connectedCallback() {
@@ -119,7 +154,36 @@ class BBMsgHistory extends HTMLElement {
   }
 
   private getAuthorConfig(author: string): AuthorConfig {
-    // 使用首字符头像的作者
+    // 1. 用户自定义配置（精确匹配）
+    const userConfig = this._userAuthors.get(author);
+    if (userConfig) {
+      return {
+        avatar: userConfig.avatar
+          ? this._wrapAvatarHtml(userConfig.avatar)
+          : this._generateLetterAvatar(author.charAt(0).toUpperCase()),
+        bubbleColor: userConfig.bubbleColor || THEME.gray[50],
+        textColor: userConfig.textColor || THEME.gray[900],
+        side: userConfig.side || 'left',
+        isCustomAvatar: !!userConfig.avatar,
+      };
+    }
+
+    // 2. 用户自定义配置（模糊匹配：作者名包含已配置的 key）
+    for (const [key, cfg] of this._userAuthors.entries()) {
+      if (author.includes(key)) {
+        return {
+          avatar: cfg.avatar
+            ? this._wrapAvatarHtml(cfg.avatar)
+            : this._generateLetterAvatar(author.charAt(0).toUpperCase()),
+          bubbleColor: cfg.bubbleColor || THEME.gray[50],
+          textColor: cfg.textColor || THEME.gray[900],
+          side: cfg.side || 'left',
+          isCustomAvatar: !!cfg.avatar,
+        };
+      }
+    }
+
+    // 3. 内置首字符头像作者（secret）
     if (FIRST_CHAR_AVATAR_AUTHORS.has(author)) {
       const config = AUTHOR_CONFIG[author];
       const firstChar = author.charAt(0);
@@ -129,28 +193,44 @@ class BBMsgHistory extends HTMLElement {
         isCustomAvatar: false
       };
     }
-    // 精确匹配
+
+    // 4. 内置配置精确匹配（secret）
     if (AUTHOR_CONFIG[author]) {
       return { ...AUTHOR_CONFIG[author], isCustomAvatar: true };
     }
-    // 模糊匹配：仅当作者名包含内置 key 时复用配置
+
+    // 5. 内置配置模糊匹配（secret）
     for (const [key, config] of Object.entries(AUTHOR_CONFIG)) {
       if (author.includes(key)) {
         return { ...config, isCustomAvatar: true };
       }
     }
     
-    // 默认：使用首字母作为头像
+    // 6. 默认：首字母头像，左侧
     const firstChar = author.charAt(0).toUpperCase();
-    const side = 'left'; // 默认左侧
-    
     return {
       avatar: this._generateLetterAvatar(firstChar),
       bubbleColor: THEME.gray[50],
       textColor: THEME.gray[900],
-      side,
+      side: 'left',
       isCustomAvatar: false
     };
+  }
+
+  private _wrapAvatarHtml(html: string): string {
+    // If it looks like a single emoji or short text (no HTML tags), wrap in a styled div
+    if (!html.includes('<')) {
+      return `<div style="
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        line-height: 1;
+      ">${html}</div>`;
+    }
+    return html;
   }
 
   private _generateLetterAvatar(letter: string): string {
@@ -523,6 +603,7 @@ if (document.readyState === 'loading') {
 }
 
 export { BBMsgHistory, define };
+export type { AuthorOptions };
 
 declare global {
   interface HTMLElementTagNameMap {

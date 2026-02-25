@@ -249,12 +249,6 @@ class BBMsgHistory extends HTMLElement {
           align-items: flex-end;
           gap: 0.5rem;
           max-width: 80%;
-          animation: fadeIn 0.2s ease-out;
-        }
-
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(4px); }
-          to { opacity: 1; transform: translateY(0); }
         }
 
         .msg-row--left {
@@ -287,7 +281,6 @@ class BBMsgHistory extends HTMLElement {
           height: 1.75rem;
           background: #ffffff;
           cursor: help;
-          transition: transform 0.15s ease;
         }
 
         .avatar-wrapper:hover {
@@ -325,8 +318,7 @@ class BBMsgHistory extends HTMLElement {
           white-space: nowrap;
           opacity: 0;
           visibility: hidden;
-          transform: translate(-50%, calc(-100% + 4px));
-          transition: opacity 0.15s ease, visibility 0.15s ease, transform 0.15s ease;
+          transform: translate(-50%, -100%);
           pointer-events: none;
           z-index: 10;
           font-weight: 500;
@@ -346,7 +338,6 @@ class BBMsgHistory extends HTMLElement {
         .avatar-wrapper:hover .avatar-tooltip {
           opacity: 1;
           visibility: visible;
-          transform: translate(-50%, -100%);
         }
 
         /* 消息内容区 */
@@ -407,43 +398,7 @@ class BBMsgHistory extends HTMLElement {
           }
         }
 
-        /* 暗色模式 */
-        @media (prefers-color-scheme: dark) {
-          :host {
-            --bb-bg-color: ${THEME.gray[900]};
-          }
-          
-          .msg-bubble--left {
-            background-color: ${THEME.gray[700]} !important;
-            color: ${THEME.gray[100]} !important;
-          }
-          
-          .msg-bubble--right {
-            background-color: ${THEME.gray[800]} !important;
-            color: ${THEME.gray[100]} !important;
-            border-color: ${THEME.gray[700]};
-          }
-          
-          .avatar-wrapper {
-            background: #ffffff;
-          }
-          
-          .avatar-tooltip {
-            background: ${THEME.gray[200]};
-            color: ${THEME.gray[900]};
-          }
-          
-          .avatar-tooltip::after {
-            border-top-color: ${THEME.gray[200]};
-          }
-        }
 
-        /* 减少动画 */
-        @media (prefers-reduced-motion: reduce) {
-          .msg-row {
-            animation: none;
-          }
-        }
       </style>
       <div class="history" role="log" aria-live="polite" aria-label="Message history">
         ${messagesHtml}

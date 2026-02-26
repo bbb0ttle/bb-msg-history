@@ -2,6 +2,8 @@ import type { AuthorOptions, Message } from './types/index.js';
 export declare class BBMsgHistory extends HTMLElement {
     private _mutationObserver?;
     private _userAuthors;
+    private _messages;
+    private _lastAuthor;
     constructor();
     /**
      * Configure an author's avatar, side, and colors.
@@ -25,6 +27,7 @@ export declare class BBMsgHistory extends HTMLElement {
      * el.appendMessage({ author: 'bob', text: 'How are you?' });
      */
     appendMessage(message: Message): this;
+    private _appendSingleMessage;
     connectedCallback(): void;
     disconnectedCallback(): void;
     private _setupMutationObserver;

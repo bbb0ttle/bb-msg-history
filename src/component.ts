@@ -8,6 +8,8 @@ import { setupTooltips } from './utils/tooltip.js';
 export class BBMsgHistory extends HTMLElement {
   private _mutationObserver?: MutationObserver;
   private _userAuthors = new Map<string, AuthorOptions>();
+  private _messages: Message[] = [];
+  private _lastAuthor = '';
 
   constructor() {
     super();
@@ -46,14 +48,88 @@ export class BBMsgHistory extends HTMLElement {
    * el.appendMessage({ author: 'bob', text: 'How are you?' });
    */
   appendMessage(message: Message): this {
-    // Append to textContent
+    // Update textContent
     const currentText = this.textContent || '';
     const separator = currentText && !currentText.endsWith('\n') ? '\n' : '';
     this.textContent = currentText + separator + `${message.author}: ${message.text}`;
     
-    // Re-render and scroll smoothly to the new message
-    this.render(true);
+    // Temporarily disconnect observer to prevent recursive render
+    this._mutationObserver?.disconnect();
+    
+    // Append single message without re-rendering entire list
+    this._appendSingleMessage(message);
+    
+    // Reconnect observer
+    this._setupMutationObserver();
+    
     return this;
+  }
+
+  private _appendSingleMessage(message: Message): void {
+    const container = this.shadowRoot!.querySelector('.history') as HTMLElement;
+    
+    // If empty state or no container, do full render first
+    if (!container) {
+      this.render();
+      return;
+    }
+
+    this._messages.push(message);
+    
+    const author = message.author;
+    const text = message.text;
+    const config = resolveAuthorConfig(author, this._userAuthors);
+    const isFirstFromAuthor = author !== this._lastAuthor;
+    this._lastAuthor = author;
+    
+    const showAvatar = isFirstFromAuthor;
+    const side = config.side;
+    const isSubsequent = !isFirstFromAuthor;
+    
+    const avatarHtml = `
+      <div class="avatar-wrapper ${showAvatar ? '' : 'avatar-wrapper--hidden'}" 
+           data-author="${escapeHtml(author)}">
+        <div class="avatar">${config.avatar}</div>
+        <div class="avatar-tooltip">${escapeHtml(author)}</div>
+      </div>
+    `;
+    
+    const msgHtml = `
+      <div class="msg-row msg-row--${side} ${isSubsequent ? 'msg-row--subsequent' : 'msg-row--new-author'}">
+        ${side === 'left' ? avatarHtml : ''}
+        
+        <div class="msg-content">
+          <div class="msg-bubble msg-bubble--${side}" 
+               style="background-color: ${config.bubbleColor}; color: ${config.textColor};">
+            ${escapeHtml(text)}
+          </div>
+        </div>
+        
+        ${side === 'right' ? avatarHtml : ''}
+      </div>
+    `;
+    
+    // Append to container
+    container.insertAdjacentHTML('beforeend', msgHtml);
+    
+    // Setup tooltip for new elements
+    const newWrapper = container.lastElementChild?.querySelector('.avatar-wrapper');
+    if (newWrapper) {
+      newWrapper.addEventListener('mouseenter', () => {
+        const tooltip = newWrapper.querySelector('.avatar-tooltip') as HTMLElement;
+        if (!tooltip) return;
+        const rect = newWrapper.getBoundingClientRect();
+        const tooltipRect = tooltip.getBoundingClientRect();
+        tooltip.style.left = `${rect.left + rect.width / 2 - tooltipRect.width / 2}px`;
+        tooltip.style.top = `${rect.top - tooltipRect.height - 8}px`;
+      });
+    }
+    
+    // Smooth scroll to bottom
+    container.scrollTo({
+      top: container.scrollHeight,
+      behavior: 'smooth'
+    });
   }
 
   connectedCallback() {
@@ -78,10 +154,12 @@ export class BBMsgHistory extends HTMLElement {
     });
   }
 
-  private render(smoothScroll = false) {
+  private render() {
     const messages = parseMessages(this.textContent);
+    this._messages = messages;
     
     if (messages.length === 0) {
+      this._lastAuthor = '';
       this._renderEmpty();
       return;
     }
@@ -122,6 +200,8 @@ export class BBMsgHistory extends HTMLElement {
       })
       .join('');
 
+    this._lastAuthor = lastAuthor;
+
     this.shadowRoot!.innerHTML = `
       <style>${MAIN_STYLES}</style>
       <div class="history" role="log" aria-live="polite" aria-label="Message history">
@@ -132,14 +212,7 @@ export class BBMsgHistory extends HTMLElement {
     requestAnimationFrame(() => {
       const container = this.shadowRoot!.querySelector('.history') as HTMLElement;
       if (container) {
-        if (smoothScroll) {
-          container.scrollTo({
-            top: container.scrollHeight,
-            behavior: 'smooth'
-          });
-        } else {
-          container.scrollTop = container.scrollHeight;
-        }
+        container.scrollTop = container.scrollHeight;
       }
 
       setupTooltips(this.shadowRoot!);

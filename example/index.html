@@ -12,46 +12,147 @@
       box-sizing: border-box;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       color: #222;
       background: #fff;
       line-height: 1.7;
-      padding: 80px 20px;
     }
 
-    .wrap {
-      max-width: 680px;
+    /* Layout */
+    .layout {
+      display: flex;
+      max-width: 1200px;
       margin: 0 auto;
     }
 
+    /* Sidebar / TOC */
+    .sidebar {
+      width: 240px;
+      flex-shrink: 0;
+      padding: 40px 0 40px 40px;
+      position: relative;
+    }
+
+    .toc {
+      position: fixed;
+      width: 200px;
+    }
+
+    .toc-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #666;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .toc-list {
+      list-style: none;
+    }
+
+    .toc-list li {
+      margin-bottom: 4px;
+    }
+
+    .toc-list a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #555;
+      text-decoration: none;
+      font-size: 14px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    .toc-list a:hover {
+      background: #f5f5f5;
+      color: #0066cc;
+    }
+
+    .toc-list a::before {
+      content: attr(data-num);
+      font-size: 11px;
+      font-weight: 500;
+      color: #999;
+      min-width: 18px;
+    }
+
+    /* Main content */
+    .main {
+      flex: 1;
+      padding: 40px 60px 80px 40px;
+      min-width: 0;
+    }
+
+    /* Header */
     header {
-      margin-bottom: 80px;
+      margin-bottom: 48px;
     }
 
     h1 {
-      font-size: 24px;
-      font-weight: 500;
+      font-size: 32px;
+      font-weight: 600;
       letter-spacing: -0.02em;
       margin-bottom: 12px;
+      color: #111;
     }
 
     .lead {
       color: #666;
-      font-size: 16px;
+      font-size: 17px;
+      line-height: 1.6;
     }
 
+    /* Section */
     section {
-      margin-bottom: 60px;
+      margin-bottom: 64px;
+      scroll-margin-top: 32px;
+    }
+
+    section:last-of-type {
+      margin-bottom: 0;
     }
 
     h2 {
-      font-size: 13px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h2 .num {
+      font-size: 12px;
       font-weight: 400;
       color: #999;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 24px;
+      min-width: 20px;
+    }
+
+    .desc {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    /* Card */
+    .card {
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 12px;
+      /* background: #fafafa; */
     }
 
     code {
@@ -59,31 +160,51 @@
       font-size: 13px;
       background: #f5f5f5;
       padding: 2px 6px;
-      border-radius: 2px;
+      border-radius: 4px;
     }
 
     pre {
-      background: #f5f5f5;
-      padding: 20px;
+      background: #f8f8f8;
+      padding: 16px;
       overflow-x: auto;
-      border-radius: 2px;
+      border-radius: 8px;
+      margin-top: 12px;
     }
 
     pre code {
       background: none;
       padding: 0;
+      border-radius: 0;
     }
 
-    .card {
-      border-radius: 8px;
-      padding: 4px;
-      margin-bottom: 16px;
+    /* Buttons */
+    .btn-group {
+      margin: 12px 0;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
+    .btn {
+      padding: 8px 16px;
+      font-size: 14px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background: #fff;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      background: #f5f5f5;
+      border-color: #ccc;
+    }
+
+    /* Install */
     .install {
       background: #fafafa;
       padding: 24px;
-      border-radius: 2px;
+      border-radius: 8px;
     }
 
     .install p {
@@ -97,352 +218,384 @@
       border: 1px solid #eee;
     }
 
+    /* Divider */
+    .section-divider {
+      border: none;
+      border-top: 1px solid #eee;
+      margin: 48px 0;
+    }
+
+    /* Back to top */
+    .back-to-top {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #fff;
+      border: 1px solid #ddd;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+      text-decoration: none;
+      color: #666;
+      z-index: 100;
+    }
+
+    .back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .back-to-top:hover {
+      background: #f5f5f5;
+    }
+
+    /* Dark mode */
     @media (prefers-color-scheme: dark) {
+      html { scroll-behavior: smooth; }
       body { background: #111827; color: #e5e7eb; }
+      h1 { color: #f9fafb; }
       .lead { color: #9ca3af; }
-      h2 { color: #6b7280; }
+      .toc-title { color: #9ca3af; border-color: #374151; }
+      .toc-list a { color: #d1d5db; }
+      .toc-list a:hover { background: #1f2937; color: #60a5fa; }
+      .toc-list a::before { color: #6b7280; }
+      h2 { color: #e5e7eb; }
+      h2 .num { color: #6b7280; }
+      .desc { color: #9ca3af; }
+      /* .card { background: #1f2937; } */
       code { background: #1f2937; color: #e5e7eb; }
       pre { background: #1f2937; color: #e5e7eb; }
       .install { background: #1f2937; }
       .install p { color: #9ca3af; }
       .install pre { background: #111827; border-color: #374151; }
+      .btn { background: #1f2937; border-color: #374151; color: #e5e7eb; }
+      .btn:hover { background: #374151; }
+      .section-divider { border-color: #374151; }
+      .back-to-top { background: #1f2937; border-color: #374151; color: #e5e7eb; }
+      .back-to-top:hover { background: #374151; }
+    }
+
+    /* Mobile */
+    @media (max-width: 900px) {
+      .layout {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        padding: 20px;
+        order: 2;
+      }
+      .toc {
+        position: relative;
+        width: 100%;
+      }
+      .toc-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .toc-list li {
+        margin-bottom: 0;
+      }
+      .toc-list a {
+        padding: 8px 14px;
+        background: #f5f5f5;
+        border-radius: 20px;
+        font-size: 13px;
+      }
+      .main {
+        padding: 40px 20px;
+        order: 1;
+      }
+      h1 { font-size: 26px; }
+    }
+
+    @media (prefers-color-scheme: dark) and (max-width: 900px) {
+      .toc-list a { background: #1f2937; }
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <h1>&lt;bb-msg-history /&gt;</h1>
-      <p class="lead">A chat-style message history web component.</p>
-    </header>
+  <div class="layout">
+    <!-- Sidebar with TOC -->
+    <aside class="sidebar">
+      <nav class="toc">
+        <div class="toc-title">Examples</div>
+        <ul class="toc-list">
+          <li><a href="#basic" data-num="01">Basic Usage</a></li>
+          <li><a href="#custom-avatar" data-num="02">Custom Avatars</a></li>
+          <li><a href="#append" data-num="03">Append Messages</a></li>
+          <li><a href="#grouping" data-num="04">Message Grouping</a></li>
+          <li><a href="#fuzzy" data-num="05">Fuzzy Matching</a></li>
+          <li><a href="#scrollable" data-num="06">Scrollable View</a></li>
+          <li><a href="#multiparty" data-num="07">Multi-party</a></li>
+          <li><a href="#dark-mode" data-num="08">Dark Mode</a></li>
+        </ul>
+      </nav>
+    </aside>
 
-    <!-- 0.  -->
-    <section>
-      <h2>DEMO - svg avatar</h2>
-      <div class="card">
-        <bb-msg-history>
-          bbki.ng: 谁呀？
-          xwy: 谁谁谁，你猴爷爷！
-        </bb-msg-history>
-      </div>
+    <!-- Main content -->
+    <main class="main">
+      <header id="top">
+        <h1>&lt;bb-msg-history /&gt;</h1>
+        <p class="lead">A chat-style message history web component. Render conversations from plain text, with avatars, bubbles, and smooth animations.</p>
+      </header>
 
-      <pre><code>&lt;bb-msg-history&gt;
-  bbki.ng: 谁呀？
-  xwy: 谁谁谁，你猴爷爷！
-&lt;/bb-msg-history&gt;</code></pre>
-    </section>
-
-    <!-- 1. 基本用法：默认首字母头像 -->
-    <section>
-      <h2>Basic — letter avatars</h2>
-      <div class="card">
-        <bb-msg-history>
-          alice: Hey, are you free this weekend?
-          bob: Sounds good! When?
-          alice: Saturday morning, around 10?
-          bob: Perfect. See you then!
-        </bb-msg-history>
-      </div>
-
-      <pre><code>&lt;bb-msg-history&gt;
+      <!-- 1. Basic -->
+      <section id="basic">
+        <h2><span class="num">01</span> Basic Usage</h2>
+        <p class="desc">Use plain text with <code>author: message</code> format. Each author gets a letter avatar by default.</p>
+        <div class="card">
+          <bb-msg-history>
+            alice: Hey, are you free this weekend?
+            bob: Sounds good! When?
+            alice: Saturday morning, around 10?
+            bob: Perfect. See you then!
+          </bb-msg-history>
+        </div>
+        <pre><code>&lt;bb-msg-history&gt;
   alice: Hey, are you free this weekend?
   bob: Sounds good! When?
 &lt;/bb-msg-history&gt;</code></pre>
-    </section>
+      </section>
 
-    <!-- 2. 自定义头像：emoji、img、side、颜色 -->
-    <section>
-      <h2>Custom avatars — setAuthor()</h2>
-      <div class="card">
-        <bb-msg-history id="custom-avatar-demo">
-          me: Hey there!
-          me: How's it going?
-          friend: Pretty good, thanks!
-          friend: What are you up to?
-          me: Just trying out this component
-          friend: Looks great!
-        </bb-msg-history>
-      </div>
-      <script>
-        customElements.whenDefined('bb-msg-history').then(() => {
-          const el = document.getElementById('custom-avatar-demo');
-          el.setAuthor('me', { avatar: '🐱', side: 'right', bubbleColor: '#f3f4f6' });
-          el.setAuthor('friend', { avatar: '🐶', side: 'left', bubbleColor: '#e0f2fe' });
-        });
-      </script>
-
-      <pre><code>el.setAuthor('me', { avatar: '🐱', side: 'right', bubbleColor: '#f3f4f6' });
-el.setAuthor('friend', { avatar: '🐶', side: 'left', bubbleColor: '#e0f2fe' });</code></pre>
-    </section>
-
-    <!-- 3. 连续消息分组：同一作者连续发送，后续消息头像隐藏 -->
-    <section>
-      <h2>Consecutive messages — avatar grouping</h2>
-      <div class="card">
-        <bb-msg-history id="consecutive-demo">
-          alice: First message
-          alice: Second message, avatar hidden
-          alice: Third, still hidden
-          bob: Got it!
-          bob: I'll send two as well
-        </bb-msg-history>
-      </div>
-      <script>
-        customElements.whenDefined('bb-msg-history').then(() => {
-          const el = document.getElementById('consecutive-demo');
-          el.setAuthor('alice', { avatar: '👩', side: 'right' });
-          el.setAuthor('bob', { avatar: '👨', side: 'left', bubbleColor: '#ecfdf5' });
-        });
-      </script>
-    </section>
-
-    <!-- 4. 未知作者：自动生成首字母头像，默认左侧显示 -->
-    <section>
-      <h2>Unknown authors — letter avatars</h2>
-      <div class="card">
-        <bb-msg-history>
-          alice: Hello!
-          bob: Hi there!
-          charlie: Hey everyone!
-          alice: Nice to meet you all
-        </bb-msg-history>
-      </div>
-    </section>
-
-    <!-- 5. 模糊匹配：作者名包含已配置 key 时复用配置 -->
-    <section>
-      <h2>Fuzzy matching — author name contains configured key</h2>
-      <div class="card">
-        <bb-msg-history id="fuzzy-demo">
-          alice: Normal message from alice
-          alice(phone): This name contains "alice", reuses her config
-          alice_work: This too!
-          bob: Just bob
-        </bb-msg-history>
-      </div>
-      <script>
-        customElements.whenDefined('bb-msg-history').then(() => {
-          const el = document.getElementById('fuzzy-demo');
-          el.setAuthor('alice', { avatar: '👩', side: 'right', bubbleColor: '#e0f2fe' });
-          el.setAuthor('bob', { avatar: '👨', side: 'left' });
-        });
-      </script>
-
-      <pre><code>// "alice(phone)" and "alice_work" fuzzy-match "alice"
-el.setAuthor('alice', { avatar: '👩', side: 'right', bubbleColor: '#fef3c7' });</code></pre>
-    </section>
-
-    <!-- 6. 单条消息 -->
-    <section>
-      <h2>Single message</h2>
-      <div class="card">
-        <bb-msg-history>
-          alice: Just one message, renders fine
-        </bb-msg-history>
-      </div>
-    </section>
-
-    <!-- 7. 长文本换行 -->
-    <section>
-      <h2>Long text — word wrap</h2>
-      <div class="card">
-        <bb-msg-history>
-          alice: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-          bob: 这是一段很长的中文消息，用来测试中文环境下的自动换行效果。消息气泡应该能够正确地处理长文本，不会溢出容器边界，同时保持良好的可读性和视觉效果。
-          alice: Superlongwordwithoutanyspacestotesttheoverflowwrapandwordbreakbehaviorofthemessagebubblecomponent
-        </bb-msg-history>
-      </div>
-    </section>
-
-    <!-- 8. 滚动长对话 -->
-    <section>
-      <h2>Scrollable long conversation</h2>
-      <div class="card">
-        <bb-msg-history>
-          alice: Hey, are you free this weekend?
-          bob: Yeah, what's up?
-          alice: Want to grab coffee?
-          bob: Sounds good! When?
-          alice: Saturday morning, around 10?
-          bob: Perfect. Which place?
-          alice: The usual spot on Main St.
-          bob: Great, see you then!
-          alice: Can't wait!
-          bob: Me neither. It's been a while.
-          alice: Way too long!
-          bob: Agreed. See you Saturday.
-          alice: I'll bring that book you wanted.
-          bob: Oh right! Thanks for remembering.
-          alice: No problem. See you!
-          bob: See ya!
-        </bb-msg-history>
-      </div>
-    </section>
-
-    <!-- 9. 空状态：无消息时显示 "No messages" -->
-    <section>
-      <h2>Empty state</h2>
-      <div class="card">
-        <bb-msg-history></bb-msg-history>
-      </div>
-
-      <pre><code>&lt;bb-msg-history&gt;&lt;/bb-msg-history&gt;</code></pre>
-    </section>
-
-    <!-- 10. 多人混合对话 -->
-    <section>
-      <h2>Multi-party mixed conversation</h2>
-      <div class="card">
-        <bb-msg-history id="multi-party-demo">
-          me: Hey everyone, let's have a meeting
-          alice: Sure thing
-          bob: On my way
-          dave: I'm here too
-          me: Let's get started
-          alice: OK
-          bob: No problem
-          dave: Got it
-          me: That's all for today
-        </bb-msg-history>
-      </div>
-      <script>
-        customElements.whenDefined('bb-msg-history').then(() => {
-          const el = document.getElementById('multi-party-demo');
-          el.setAuthor('me', { avatar: '😎', side: 'right' });
-          el.setAuthor('alice', { avatar: '👩', side: 'left', bubbleColor: '#e0f2fe' });
-          el.setAuthor('bob', { avatar: '👨', side: 'left', bubbleColor: '#ecfdf5' });
-        });
-      </script>
-    </section>
-
-    <!-- 11. 自定义最大高度：通过 CSS 变量 --bb-max-height 控制 -->
-    <section>
-      <h2>Custom max-height — CSS variable</h2>
-      <div class="card">
-        <bb-msg-history style="--bb-max-height: 200px;">
-          alice: This container is only 200px tall
-          bob: So it should scroll sooner
-          alice: Let's add more messages
-          bob: To demonstrate the effect
-          alice: One more line
-          bob: And another
-          alice: Almost there
-          bob: Yep, scrolling now!
-          alice: Great, it works
-          bob: Nice and compact
-        </bb-msg-history>
-      </div>
-
-      <pre><code>&lt;bb-msg-history style="--bb-max-height: 200px;"&gt;
-  ...
-&lt;/bb-msg-history&gt;</code></pre>
-    </section>
-
-    <!-- 12. 使用 appendMessage API -->
-    <section>
-      <h2>Append message — appendMessage()</h2>
-      <div class="card">
-        <bb-msg-history id="append-demo" style="--bb-max-height: 200px;">
-          alice: Try the appendMessage() API!
-          bob: Click the buttons below to add messages
-        </bb-msg-history>
-      </div>
-      <div style="margin-top: 8px; margin-bottom: 8px;">
-        <button id="append-alice-btn" style="
-          padding: 8px 16px;
-          font-size: 14px;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          background: #e0f2fe;
-          cursor: pointer;
-          margin-right: 8px;
-        ">Add from alice</button>
-        <button id="append-bob-btn" style="
-          padding: 8px 16px;
-          font-size: 14px;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          background: #ecfdf5;
-          cursor: pointer;
-        ">Add from bob</button>
-      </div>
-      <script>
-        (() => {
-          const el = document.getElementById('append-demo');
-          const aliceBtn = document.getElementById('append-alice-btn');
-          const bobBtn = document.getElementById('append-bob-btn');
-          
-          const aliceMsgs = [
-            'This uses the appendMessage() API',
-            'It scrolls smoothly to new messages',
-            'Much better UX for chat apps!',
-            'Try clicking multiple times',
-          ];
-          const bobMsgs = [
-            'Yeah, smooth scrolling is nice',
-            'The API is simple too',
-            'Just pass { author, text }',
-            'And it handles the rest!',
-          ];
-          let aliceIdx = 0;
-          let bobIdx = 0;
-          
+      <!-- 2. Custom Avatars -->
+      <section id="custom-avatar">
+        <h2><span class="num">02</span> Custom Avatars</h2>
+        <p class="desc">Use <code>setAuthor()</code> to customize avatars (emoji, SVG, or image), side position, and bubble colors.</p>
+        <div class="card">
+          <bb-msg-history id="custom-avatar-demo">
+            me: Hey there!
+            me: How's it going?
+            friend: Pretty good, thanks!
+            friend: What are you up to?
+            me: Just trying out this component
+            friend: Looks great!
+          </bb-msg-history>
+        </div>
+        <script>
           customElements.whenDefined('bb-msg-history').then(() => {
-            el.setAuthor('alice', { avatar: '👩', side: 'right', bubbleColor: '#e0f2fe' });
+            const el = document.getElementById('custom-avatar-demo');
+            el.setAuthor('me', { avatar: '🐱', side: 'right', bubbleColor: '#f3f4f6' });
+            el.setAuthor('friend', { avatar: '🐶', side: 'left', bubbleColor: '#e0f2fe' });
+          });
+        </script>
+        <pre><code>el.setAuthor('me', { avatar: '🐱', side: 'right', bubbleColor: '#f3f4f6' });
+el.setAuthor('friend', { avatar: '🐶', side: 'left', bubbleColor: '#e0f2fe' });</code></pre>
+      </section>
+
+      <!-- 3. Append Messages -->
+      <section id="append">
+        <h2><span class="num">03</span> Append Messages</h2>
+        <p class="desc">Use <code>appendMessage()</code> to add messages programmatically with smooth scrolling.</p>
+        <div class="card">
+          <bb-msg-history id="append-demo" style="--bb-max-height: 200px;">
+            alice: Try the appendMessage() API!
+            bob: Click the buttons below to add messages
+          </bb-msg-history>
+        </div>
+        <div class="btn-group">
+          <button class="btn" id="append-alice-btn">Add from alice</button>
+          <button class="btn" id="append-bob-btn">Add from bob</button>
+        </div>
+        <script>
+          (() => {
+            const el = document.getElementById('append-demo');
+            const aliceBtn = document.getElementById('append-alice-btn');
+            const bobBtn = document.getElementById('append-bob-btn');
+            
+            const aliceMsgs = [
+              'This uses the appendMessage() API',
+              'It scrolls smoothly to new messages',
+              'Much better UX for chat apps!',
+              'Try clicking multiple times',
+            ];
+            const bobMsgs = [
+              'Yeah, smooth scrolling is nice',
+              'The API is simple too',
+              'Just pass { author, text }',
+              'And it handles the rest!',
+            ];
+            let aliceIdx = 0;
+            let bobIdx = 0;
+            
+            customElements.whenDefined('bb-msg-history').then(() => {
+              el.setAuthor('alice', { avatar: '👩', side: 'right', bubbleColor: '#e0f2fe' });
+              el.setAuthor('bob', { avatar: '👨', side: 'left', bubbleColor: '#ecfdf5' });
+            });
+            
+            aliceBtn.addEventListener('click', () => {
+              el.appendMessage({
+                author: 'alice',
+                text: aliceMsgs[aliceIdx % aliceMsgs.length]
+              });
+              aliceIdx++;
+            });
+            
+            bobBtn.addEventListener('click', () => {
+              el.appendMessage({
+                author: 'bob',
+                text: bobMsgs[bobIdx % bobMsgs.length]
+              });
+              bobIdx++;
+            });
+          })();
+        </script>
+        <pre><code>el.appendMessage({ author: 'alice', text: 'Hello!' });
+el.appendMessage({ author: 'bob', text: 'How are you?' });</code></pre>
+      </section>
+
+      <hr class="section-divider">
+
+      <!-- 4. Message Grouping -->
+      <section id="grouping">
+        <h2><span class="num">04</span> Message Grouping</h2>
+        <p class="desc">Consecutive messages from the same author are grouped together. The avatar is only shown on the first message.</p>
+        <div class="card">
+          <bb-msg-history id="grouping-demo">
+            alice: First message
+            alice: Second message, avatar hidden
+            alice: Third, still hidden
+            bob: Got it!
+            bob: I'll send two as well
+          </bb-msg-history>
+        </div>
+        <script>
+          customElements.whenDefined('bb-msg-history').then(() => {
+            const el = document.getElementById('grouping-demo');
+            el.setAuthor('alice', { avatar: '👩', side: 'right' });
             el.setAuthor('bob', { avatar: '👨', side: 'left', bubbleColor: '#ecfdf5' });
           });
-          
-          aliceBtn.addEventListener('click', () => {
-            el.appendMessage({
-              author: 'alice',
-              text: aliceMsgs[aliceIdx % aliceMsgs.length]
-            });
-            aliceIdx++;
+        </script>
+      </section>
+
+      <!-- 5. Fuzzy Matching -->
+      <section id="fuzzy">
+        <h2><span class="num">05</span> Fuzzy Matching</h2>
+        <p class="desc">Author names containing a configured key will reuse that config. For example, <code>"alice(phone)"</code> matches <code>"alice"</code>.</p>
+        <div class="card">
+          <bb-msg-history id="fuzzy-demo">
+            alice: Normal message from alice
+            alice(phone): This name contains "alice", reuses her config
+            alice_work: This too!
+            bob: Just bob
+          </bb-msg-history>
+        </div>
+        <script>
+          customElements.whenDefined('bb-msg-history').then(() => {
+            const el = document.getElementById('fuzzy-demo');
+            el.setAuthor('alice', { avatar: '👩', side: 'right', bubbleColor: '#e0f2fe' });
+            el.setAuthor('bob', { avatar: '👨', side: 'left' });
           });
-          
-          bobBtn.addEventListener('click', () => {
-            el.appendMessage({
-              author: 'bob',
-              text: bobMsgs[bobIdx % bobMsgs.length]
-            });
-            bobIdx++;
+        </script>
+      </section>
+
+      <!-- 6. Scrollable -->
+      <section id="scrollable">
+        <h2><span class="num">06</span> Scrollable View</h2>
+        <p class="desc">Long conversations automatically scroll. Use <code>--bb-max-height</code> CSS variable to customize the container height.</p>
+        <div class="card">
+          <bb-msg-history style="--bb-max-height: 200px;">
+            alice: Hey, are you free this weekend?
+            bob: Yeah, what's up?
+            alice: Want to grab coffee?
+            bob: Sounds good! When?
+            alice: Saturday morning, around 10?
+            bob: Perfect. Which place?
+            alice: The usual spot on Main St.
+            bob: Great, see you then!
+            alice: Can't wait!
+            bob: Me neither. It's been a while.
+            alice: Way too long!
+            bob: Agreed. See you Saturday.
+            alice: I'll bring that book you wanted.
+            bob: Oh right! Thanks for remembering.
+            alice: No problem. See you!
+            bob: See ya!
+          </bb-msg-history>
+        </div>
+        <pre><code>&lt;bb-msg-history style="--bb-max-height: 200px;"&gt;...&lt;/bb-msg-history&gt;</code></pre>
+      </section>
+
+      <!-- 7. Multi-party -->
+      <section id="multiparty">
+        <h2><span class="num">07</span> Multi-party Chat</h2>
+        <p class="desc">Support for more than two participants in a conversation.</p>
+        <div class="card">
+          <bb-msg-history id="multi-party-demo">
+            me: Hey everyone, let's have a meeting
+            alice: Sure thing
+            bob: On my way
+            dave: I'm here too
+            me: Let's get started
+            alice: OK
+            bob: No problem
+            dave: Got it
+            me: That's all for today
+          </bb-msg-history>
+        </div>
+        <script>
+          customElements.whenDefined('bb-msg-history').then(() => {
+            const el = document.getElementById('multi-party-demo');
+            el.setAuthor('me', { avatar: '😎', side: 'right' });
+            el.setAuthor('alice', { avatar: '👩', side: 'left', bubbleColor: '#e0f2fe' });
+            el.setAuthor('bob', { avatar: '👨', side: 'left', bubbleColor: '#ecfdf5' });
           });
-        })();
-      </script>
+        </script>
+      </section>
 
-      <pre><code>// Use appendMessage() for smooth scrolling
-const el = document.querySelector('bb-msg-history');
+      <!-- 8. Dark Mode -->
+      <section id="dark-mode">
+        <h2><span class="num">08</span> Dark Mode</h2>
+        <p class="desc">Automatically adapts to system dark mode preference via <code>prefers-color-scheme</code>.</p>
+        <div class="card" style="background: #111827; padding: 16px;">
+          <bb-msg-history id="dark-demo" style="color-scheme: dark;">
+            alice: Dark mode conversation
+            bob: Adapts automatically
+            alice: Bubbles and backgrounds change
+            bob: Nice!
+          </bb-msg-history>
+        </div>
+        <p class="desc" style="margin-top: 12px;">Toggle your system dark mode to see it everywhere, or this card forces a dark background.</p>
+      </section>
 
-el.appendMessage({ author: 'alice', text: 'Hello!' });
-el.appendMessage({ author: 'bob', text: 'How are you?' });</code></pre>
-    </section>
+      <hr class="section-divider">
 
-    <!-- 13. Dark mode 预览 -->
-    <section>
-      <h2>Dark mode — prefers-color-scheme</h2>
-      <div class="card" style="background: #111827; padding: 16px; border-radius: 8px;">
-        <bb-msg-history id="dark-demo" style="color-scheme: dark;">
-          alice: Dark mode conversation
-          bob: Adapts to dark theme automatically
-          alice: Bubbles and backgrounds change
-          bob: Nice!
-        </bb-msg-history>
-      </div>
-      <p style="margin-top: 12px; font-size: 13px; color: #999;">
-        ↑ Toggle your system to dark mode to see it in action across the whole page, or inspect this card which forces a dark background.
-      </p>
-    </section>
+      <!-- Installation -->
+      <section id="install">
+        <h2 style="font-size: 18px; font-weight: 600;">Installation</h2>
+        <div class="install">
+          <p>npm</p>
+          <pre><code>npm install @bbki.ng/bb-msg-history</code></pre>
 
-    <section>
-      <h2>Installation</h2>
-      <div class="install">
-        <p>npm</p>
-        <pre><code>npm install @bbki.ng/bb-msg-history</code></pre>
-
-        <p style="margin-top: 20px;">CDN</p>
-        <pre><code>&lt;script type="module" src="https://cdn.jsdelivr.net/npm/@bbki.ng/bb-msg-history@latest/dist/index.js"&gt;&lt;/script&gt;</code></pre>
-      </div>
-    </section>
+          <p style="margin-top: 20px;">CDN</p>
+          <pre><code>&lt;script type="module" src="https://cdn.jsdelivr.net/npm/@bbki.ng/bb-msg-history@latest/dist/index.js"&gt;&lt;/script&gt;</code></pre>
+        </div>
+      </section>
+    </main>
   </div>
+
+  <a href="#top" class="back-to-top" id="backToTop" title="Back to top">↑</a>
+
+  <script>
+    // Back to top button visibility
+    const backToTop = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 300) {
+        backToTop.classList.add('visible');
+      } else {
+        backToTop.classList.remove('visible');
+      }
+    });
+  </script>
 </body>
 </html>

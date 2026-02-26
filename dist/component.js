@@ -1,13 +1,12 @@
 import { MAIN_STYLES, EMPTY_STYLES } from './const/styles.js';
 import { parseMessages } from './utils/message-parser.js';
 import { resolveAuthorConfig } from './utils/author-resolver.js';
-import { escapeHtml } from './utils/html.js';
 import { setupTooltips } from './utils/tooltip.js';
+import { buildMessageRowHtml, setupTooltipForElement } from './utils/message-builder.js';
 export class BBMsgHistory extends HTMLElement {
     constructor() {
         super();
         this._userAuthors = new Map();
-        this._messages = [];
         this._lastAuthor = '';
         this.attachShadow({ mode: 'open' });
     }
@@ -60,50 +59,20 @@ export class BBMsgHistory extends HTMLElement {
             this.render();
             return;
         }
-        this._messages.push(message);
         const author = message.author;
         const text = message.text;
         const config = resolveAuthorConfig(author, this._userAuthors);
         const isFirstFromAuthor = author !== this._lastAuthor;
         this._lastAuthor = author;
-        const showAvatar = isFirstFromAuthor;
-        const side = config.side;
         const isSubsequent = !isFirstFromAuthor;
-        const avatarHtml = `
-      <div class="avatar-wrapper ${showAvatar ? '' : 'avatar-wrapper--hidden'}" 
-           data-author="${escapeHtml(author)}">
-        <div class="avatar">${config.avatar}</div>
-        <div class="avatar-tooltip">${escapeHtml(author)}</div>
-      </div>
-    `;
-        const msgHtml = `
-      <div class="msg-row msg-row--${side} ${isSubsequent ? 'msg-row--subsequent' : 'msg-row--new-author'}">
-        ${side === 'left' ? avatarHtml : ''}
-        
-        <div class="msg-content">
-          <div class="msg-bubble msg-bubble--${side}" 
-               style="background-color: ${config.bubbleColor}; color: ${config.textColor};">
-            ${escapeHtml(text)}
-          </div>
-        </div>
-        
-        ${side === 'right' ? avatarHtml : ''}
-      </div>
-    `;
+        // Use utility function to build message HTML
+        const msgHtml = buildMessageRowHtml(author, text, config, isSubsequent);
         // Append to container
         container.insertAdjacentHTML('beforeend', msgHtml);
-        // Setup tooltip for new elements
+        // Setup tooltip for new element using utility function
         const newWrapper = container.lastElementChild?.querySelector('.avatar-wrapper');
         if (newWrapper) {
-            newWrapper.addEventListener('mouseenter', () => {
-                const tooltip = newWrapper.querySelector('.avatar-tooltip');
-                if (!tooltip)
-                    return;
-                const rect = newWrapper.getBoundingClientRect();
-                const tooltipRect = tooltip.getBoundingClientRect();
-                tooltip.style.left = `${rect.left + rect.width / 2 - tooltipRect.width / 2}px`;
-                tooltip.style.top = `${rect.top - tooltipRect.height - 8}px`;
-            });
+            setupTooltipForElement(newWrapper);
         }
         // Smooth scroll to bottom
         container.scrollTo({
@@ -132,7 +101,6 @@ export class BBMsgHistory extends HTMLElement {
     }
     render() {
         const messages = parseMessages(this.textContent);
-        this._messages = messages;
         if (messages.length === 0) {
             this._lastAuthor = '';
             this._renderEmpty();
@@ -144,30 +112,9 @@ export class BBMsgHistory extends HTMLElement {
             const config = resolveAuthorConfig(author, this._userAuthors);
             const isFirstFromAuthor = author !== lastAuthor;
             lastAuthor = author;
-            const showAvatar = isFirstFromAuthor;
-            const side = config.side;
             const isSubsequent = !isFirstFromAuthor;
-            const avatarHtml = `
-          <div class="avatar-wrapper ${showAvatar ? '' : 'avatar-wrapper--hidden'}" 
-               data-author="${escapeHtml(author)}">
-            <div class="avatar">${config.avatar}</div>
-            <div class="avatar-tooltip">${escapeHtml(author)}</div>
-          </div>
-        `;
-            return `
-          <div class="msg-row msg-row--${side} ${isSubsequent ? 'msg-row--subsequent' : 'msg-row--new-author'}">
-            ${side === 'left' ? avatarHtml : ''}
-            
-            <div class="msg-content">
-              <div class="msg-bubble msg-bubble--${side}" 
-                   style="background-color: ${config.bubbleColor}; color: ${config.textColor};">
-                ${escapeHtml(text)}
-              </div>
-            </div>
-            
-            ${side === 'right' ? avatarHtml : ''}
-          </div>
-        `;
+            // Use utility function to build message HTML
+            return buildMessageRowHtml(author, text, config, isSubsequent);
         })
             .join('');
         this._lastAuthor = lastAuthor;

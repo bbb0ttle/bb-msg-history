@@ -2,7 +2,6 @@ import type { AuthorOptions, Message } from './types/index.js';
 export declare class BBMsgHistory extends HTMLElement {
     private _mutationObserver?;
     private _userAuthors;
-    private _messages;
     private _lastAuthor;
     constructor();
     /**

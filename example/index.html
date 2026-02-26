@@ -338,49 +338,83 @@ el.setAuthor('alice', { avatar: '👩', side: 'right', bubbleColor: '#fef3c7' })
 &lt;/bb-msg-history&gt;</code></pre>
     </section>
 
-    <!-- 12. 动态更新：MutationObserver 自动重渲染 -->
+    <!-- 12. 使用 appendMessage API -->
     <section>
-      <h2>Dynamic update — reactive content</h2>
+      <h2>Append message — appendMessage()</h2>
       <div class="card">
-        <bb-msg-history id="dynamic-demo" style="--bb-max-height: 200px;">
-          alice: Click the button below to add a message
+        <bb-msg-history id="append-demo" style="--bb-max-height: 200px;">
+          alice: Try the appendMessage() API!
+          bob: Click the buttons below to add messages
         </bb-msg-history>
       </div>
-      <button id="add-msg-btn" style="
-        margin-top: 8px;
-        margin-bottom: 8px;
-        padding: 8px 16px;
-        font-size: 14px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        background: #fafafa;
-        cursor: pointer;
-      ">Add message</button>
+      <div style="margin-top: 8px; margin-bottom: 8px;">
+        <button id="append-alice-btn" style="
+          padding: 8px 16px;
+          font-size: 14px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          background: #e0f2fe;
+          cursor: pointer;
+          margin-right: 8px;
+        ">Add from alice</button>
+        <button id="append-bob-btn" style="
+          padding: 8px 16px;
+          font-size: 14px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          background: #ecfdf5;
+          cursor: pointer;
+        ">Add from bob</button>
+      </div>
       <script>
         (() => {
-          const el = document.getElementById('dynamic-demo');
-          const btn = document.getElementById('add-msg-btn');
-          const authors = ['bob', 'charlie', 'alice'];
-          const msgs = [
-            'Hey, I was added dynamically!',
-            'Me too, via MutationObserver!',
-            'The component re-renders automatically',
-            'No manual refresh needed',
-            'Pretty cool, right?',
+          const el = document.getElementById('append-demo');
+          const aliceBtn = document.getElementById('append-alice-btn');
+          const bobBtn = document.getElementById('append-bob-btn');
+          
+          const aliceMsgs = [
+            'This uses the appendMessage() API',
+            'It scrolls smoothly to new messages',
+            'Much better UX for chat apps!',
+            'Try clicking multiple times',
           ];
-          let i = 0;
-          btn.addEventListener('click', () => {
-            const author = authors[i % authors.length];
-            const text = msgs[i % msgs.length];
-            el.textContent += `\n${author}: ${text}`;
-            i++;
+          const bobMsgs = [
+            'Yeah, smooth scrolling is nice',
+            'The API is simple too',
+            'Just pass { author, text }',
+            'And it handles the rest!',
+          ];
+          let aliceIdx = 0;
+          let bobIdx = 0;
+          
+          customElements.whenDefined('bb-msg-history').then(() => {
+            el.setAuthor('alice', { avatar: '👩', side: 'right', bubbleColor: '#e0f2fe' });
+            el.setAuthor('bob', { avatar: '👨', side: 'left', bubbleColor: '#ecfdf5' });
+          });
+          
+          aliceBtn.addEventListener('click', () => {
+            el.appendMessage({
+              author: 'alice',
+              text: aliceMsgs[aliceIdx % aliceMsgs.length]
+            });
+            aliceIdx++;
+          });
+          
+          bobBtn.addEventListener('click', () => {
+            el.appendMessage({
+              author: 'bob',
+              text: bobMsgs[bobIdx % bobMsgs.length]
+            });
+            bobIdx++;
           });
         })();
       </script>
 
-      <pre><code>// Component auto re-renders when textContent changes
+      <pre><code>// Use appendMessage() for smooth scrolling
 const el = document.querySelector('bb-msg-history');
-el.textContent += '\nbob: Added dynamically!';</code></pre>
+
+el.appendMessage({ author: 'alice', text: 'Hello!' });
+el.appendMessage({ author: 'bob', text: 'How are you?' });</code></pre>
     </section>
 
     <!-- 13. Dark mode 预览 -->

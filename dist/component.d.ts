@@ -1,4 +1,4 @@
-import type { AuthorOptions } from './types/index.js';
+import type { AuthorOptions, Message } from './types/index.js';
 export declare class BBMsgHistory extends HTMLElement {
     private _mutationObserver?;
     private _userAuthors;
@@ -16,6 +16,15 @@ export declare class BBMsgHistory extends HTMLElement {
      * Remove a previously set author config.
      */
     removeAuthor(name: string): this;
+    /**
+     * Append a message to the history.
+     * Automatically scrolls to the new message with smooth animation.
+     *
+     * @example
+     * el.appendMessage({ author: 'alice', text: 'Hello!' });
+     * el.appendMessage({ author: 'bob', text: 'How are you?' });
+     */
+    appendMessage(message: Message): this;
     connectedCallback(): void;
     disconnectedCallback(): void;
     private _setupMutationObserver;

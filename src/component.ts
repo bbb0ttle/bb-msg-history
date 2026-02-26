@@ -1,4 +1,4 @@
-import type { AuthorOptions } from './types/index.js';
+import type { AuthorOptions, Message } from './types/index.js';
 import { MAIN_STYLES, EMPTY_STYLES } from './const/styles.js';
 import { parseMessages } from './utils/message-parser.js';
 import { resolveAuthorConfig } from './utils/author-resolver.js';
@@ -37,6 +37,25 @@ export class BBMsgHistory extends HTMLElement {
     return this;
   }
 
+  /**
+   * Append a message to the history.
+   * Automatically scrolls to the new message with smooth animation.
+   *
+   * @example
+   * el.appendMessage({ author: 'alice', text: 'Hello!' });
+   * el.appendMessage({ author: 'bob', text: 'How are you?' });
+   */
+  appendMessage(message: Message): this {
+    // Append to textContent
+    const currentText = this.textContent || '';
+    const separator = currentText && !currentText.endsWith('\n') ? '\n' : '';
+    this.textContent = currentText + separator + `${message.author}: ${message.text}`;
+    
+    // Re-render and scroll smoothly to the new message
+    this.render(true);
+    return this;
+  }
+
   connectedCallback() {
     this.render();
     this._setupMutationObserver();
@@ -59,7 +78,7 @@ export class BBMsgHistory extends HTMLElement {
     });
   }
 
-  private render() {
+  private render(smoothScroll = false) {
     const messages = parseMessages(this.textContent);
     
     if (messages.length === 0) {
@@ -113,7 +132,14 @@ export class BBMsgHistory extends HTMLElement {
     requestAnimationFrame(() => {
       const container = this.shadowRoot!.querySelector('.history') as HTMLElement;
       if (container) {
-        container.scrollTop = container.scrollHeight;
+        if (smoothScroll) {
+          container.scrollTo({
+            top: container.scrollHeight,
+            behavior: 'smooth'
+          });
+        } else {
+          container.scrollTop = container.scrollHeight;
+        }
       }
 
       setupTooltips(this.shadowRoot!);

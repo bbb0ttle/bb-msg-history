@@ -30,6 +30,23 @@ export class BBMsgHistory extends HTMLElement {
         this.render();
         return this;
     }
+    /**
+     * Append a message to the history.
+     * Automatically scrolls to the new message with smooth animation.
+     *
+     * @example
+     * el.appendMessage({ author: 'alice', text: 'Hello!' });
+     * el.appendMessage({ author: 'bob', text: 'How are you?' });
+     */
+    appendMessage(message) {
+        // Append to textContent
+        const currentText = this.textContent || '';
+        const separator = currentText && !currentText.endsWith('\n') ? '\n' : '';
+        this.textContent = currentText + separator + `${message.author}: ${message.text}`;
+        // Re-render and scroll smoothly to the new message
+        this.render(true);
+        return this;
+    }
     connectedCallback() {
         this.render();
         this._setupMutationObserver();
@@ -49,7 +66,7 @@ export class BBMsgHistory extends HTMLElement {
             subtree: true,
         });
     }
-    render() {
+    render(smoothScroll = false) {
         const messages = parseMessages(this.textContent);
         if (messages.length === 0) {
             this._renderEmpty();
@@ -96,7 +113,15 @@ export class BBMsgHistory extends HTMLElement {
         requestAnimationFrame(() => {
             const container = this.shadowRoot.querySelector('.history');
             if (container) {
-                container.scrollTop = container.scrollHeight;
+                if (smoothScroll) {
+                    container.scrollTo({
+                        top: container.scrollHeight,
+                        behavior: 'smooth'
+                    });
+                }
+                else {
+                    container.scrollTop = container.scrollHeight;
+                }
             }
             setupTooltips(this.shadowRoot);
         });

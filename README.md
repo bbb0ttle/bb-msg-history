@@ -83,6 +83,24 @@ Fuzzy matching: if an author name _contains_ a configured key (e.g. you configur
 
 Use `removeAuthor(name)` to remove a custom config.
 
+### `appendMessage(message)`
+
+Append a message programmatically with smooth scroll to the new message.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `message.author` | `string` | The author name |
+| `message.text` | `string` | The message text |
+
+```js
+el.appendMessage({ author: 'alice', text: 'Hello!' });
+el.appendMessage({ author: 'bob', text: 'How are you?' });
+```
+
+Returns `this` for chaining. This is ideal for chat applications where messages arrive in real-time.
+
+**Note:** Unlike modifying `textContent` directly, `appendMessage()` scrolls smoothly to the newly added message.
+
 ## Customization
 
 ### CSS Custom Properties
@@ -119,6 +137,7 @@ define('my-chat-history');
 - Hover tooltip showing the author name
 - Consecutive messages from the same author are grouped (avatar hidden)
 - Auto-scroll to the latest message on render
+- **`appendMessage()` API** — programmatically add messages with smooth scroll
 - Long text word-wrap and overflow handling
 - Empty state when no messages are provided
 - Dark mode support via `prefers-color-scheme`
@@ -188,6 +207,31 @@ When no messages are provided, a "No messages" placeholder is shown:
 
 ```html
 <bb-msg-history></bb-msg-history>
+```
+
+### Dynamic message appending
+
+Use `appendMessage()` to add messages programmatically with smooth scrolling:
+
+```html
+<bb-msg-history id="chat" style="--bb-max-height: 300px;">
+  alice: Hey there!
+</bb-msg-history>
+
+<script>
+  const el = document.getElementById('chat');
+  el.setAuthor('alice', { avatar: '👩', side: 'right' });
+  el.setAuthor('bob', { avatar: '👨', side: 'left' });
+
+  // Add messages dynamically with smooth scroll
+  el.appendMessage({ author: 'bob', text: 'Hello! How are you?' });
+  el.appendMessage({ author: 'alice', text: 'I\'m doing great!' });
+  
+  // Simulate receiving a message after 2 seconds
+  setTimeout(() => {
+    el.appendMessage({ author: 'bob', text: 'Nice to hear that!' });
+  }, 2000);
+</script>
 ```
 
 ### Full page example

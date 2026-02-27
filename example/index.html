@@ -18,6 +18,8 @@
       --radius: 8px;
       --sidebar-width: 240px;
       --transparent-dotted-border: #ccc;
+      --scrollbar-thumb: #9ca3af;
+      --scrollbar-thumb-hover: #6b7280;
     }
 
 
@@ -30,6 +32,8 @@
         --muted-bg: #111;
         --border: #222;
         --accent: #60a5fa;
+        --scrollbar-thumb: #4b5563;
+        --scrollbar-thumb-hover: #6b7280;
       }
     }
 
@@ -87,6 +91,27 @@
       overflow-y: auto;
       padding: 40px 32px;
       background-color: #fafafa;
+      /* Firefox scrollbar */
+      scrollbar-width: thin;
+      scrollbar-color: var(--scrollbar-thumb) transparent;
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar::-webkit-scrollbar-track {
+      background: transparent;
+      border-radius: 3px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: var(--scrollbar-thumb);
+      border-radius: 3px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb:hover {
+      background: var(--scrollbar-thumb-hover);
     }
 
     .logo {
@@ -159,6 +184,27 @@
       margin-left: var(--sidebar-width);
       padding: 90px;
       max-width: 800px;
+      /* Firefox scrollbar */
+      scrollbar-width: thin;
+      scrollbar-color: var(--scrollbar-thumb) transparent;
+    }
+
+    .main::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .main::-webkit-scrollbar-track {
+      background: transparent;
+      border-radius: 3px;
+    }
+
+    .main::-webkit-scrollbar-thumb {
+      background: var(--scrollbar-thumb);
+      border-radius: 3px;
+    }
+
+    .main::-webkit-scrollbar-thumb:hover {
+      background: var(--scrollbar-thumb-hover);
     }
 
     /* Typography */
@@ -330,20 +376,20 @@
       position: fixed;
       bottom: 24px;
       right: 24px;
-      width: 40px;
-      height: 40px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
-      background: var(--bg);
-      border: 1px solid var(--border);
+      background: transparent;
+      border: none;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
       opacity: 0;
       visibility: hidden;
-      transition: all 0.3s;
+      transform: translateY(10px) scale(0.9);
+      transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
       text-decoration: none;
       color: var(--muted);
       z-index: 100;
@@ -352,11 +398,22 @@
     .back-to-top.visible {
       opacity: 1;
       visibility: visible;
+      transform: translateY(0) scale(1);
     }
 
     .back-to-top:hover {
       color: var(--fg);
-      background: var(--muted-bg);
+      transform: translateY(-2px) scale(1);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    }
+
+    .back-to-top:active {
+      transform: translateY(0) scale(0.95);
+    }
+
+    .back-to-top svg {
+      width: 20px;
+      height: 20px;
     }
 
     /* Mobile */
@@ -621,7 +678,11 @@ el.appendMessage({ author: 'bob', text: 'How are you?' });</code></pre>
     </main>
   </div>
 
-  <a href="#introduction" class="back-to-top" id="backToTop" title="Back to top">↑</a>
+  <a href="#introduction" class="back-to-top" id="backToTop" title="Back to top" aria-label="Back to top">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="18 15 12 9 6 15"></polyline>
+    </svg>
+  </a>
 
   <script>
     // Back to top button

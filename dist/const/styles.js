@@ -5,6 +5,7 @@ import { THEME } from './theme.js';
 export const MAIN_STYLES = `
   :host {
     display: block;
+    position: relative;
     font-family: "PT Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
       "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
       "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
@@ -45,6 +46,50 @@ export const MAIN_STYLES = `
 
   .history::-webkit-scrollbar-thumb:hover {
     background: ${THEME.gray[500]};
+  }
+
+  /* Scroll to bottom button */
+  .scroll-to-bottom {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    color: ${THEME.gray[500]};
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%) translateY(10px) scale(0.9);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+  }
+
+  .scroll-to-bottom.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+
+  .scroll-to-bottom:hover {
+    color: ${THEME.gray[700]};
+    transform: translateX(-50%) translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .scroll-to-bottom:active {
+    transform: translateX(-50%) translateY(0) scale(0.95);
+  }
+
+  .scroll-to-bottom svg {
+    width: 20px;
+    height: 20px;
   }
 
   /* Message row layout */
@@ -196,6 +241,17 @@ export const MAIN_STYLES = `
       width: 1.5rem;
       height: 1.5rem;
     }
+
+    .scroll-to-bottom {
+      width: 32px;
+      height: 32px;
+      bottom: 12px;
+    }
+
+    .scroll-to-bottom svg {
+      width: 18px;
+      height: 18px;
+    }
   }
 
   /* Dark mode */
@@ -234,12 +290,41 @@ export const MAIN_STYLES = `
     .empty-state {
       color: ${THEME.gray[500]};
     }
+
+    .scroll-to-bottom {
+      background: transparent;
+      border: none;
+      color: ${THEME.gray[400]};
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .scroll-to-bottom:hover {
+      color: ${THEME.gray[300]};
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    }
   }
 
   /* Reduced motion */
   @media (prefers-reduced-motion: reduce) {
     .history {
       scroll-behavior: auto;
+    }
+
+    .scroll-to-bottom {
+      transition: opacity 0.15s ease, visibility 0.15s ease;
+      transform: translateX(-50%);
+    }
+
+    .scroll-to-bottom.visible {
+      transform: translateX(-50%);
+    }
+
+    .scroll-to-bottom:hover {
+      transform: translateX(-50%);
+    }
+
+    .scroll-to-bottom:active {
+      transform: translateX(-50%);
     }
   }
 `;

@@ -3,6 +3,7 @@ export declare class BBMsgHistory extends HTMLElement {
     private _mutationObserver?;
     private _userAuthors;
     private _lastAuthor;
+    private _scrollButtonVisible;
     constructor();
     /**
      * Configure an author's avatar, side, and colors.
@@ -32,4 +33,5 @@ export declare class BBMsgHistory extends HTMLElement {
     private _setupMutationObserver;
     private render;
     private _renderEmpty;
+    private _setupScrollTracking;
 }

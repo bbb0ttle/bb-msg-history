@@ -4,11 +4,13 @@ import { parseMessages } from './utils/message-parser.js';
 import { resolveAuthorConfig } from './utils/author-resolver.js';
 import { setupTooltips } from './utils/tooltip.js';
 import { buildMessageRowHtml, setupTooltipForElement } from './utils/message-builder.js';
+import { buildScrollButtonHtml } from './utils/scroll-button.js';
 
 export class BBMsgHistory extends HTMLElement {
   private _mutationObserver?: MutationObserver;
   private _userAuthors = new Map<string, AuthorOptions>();
   private _lastAuthor = '';
+  private _scrollButtonVisible = false;
 
   constructor() {
     super();
@@ -98,6 +100,13 @@ export class BBMsgHistory extends HTMLElement {
       top: container.scrollHeight,
       behavior: 'smooth'
     });
+
+    // Hide scroll button since we're scrolling to bottom
+    const scrollButton = this.shadowRoot!.querySelector('.scroll-to-bottom') as HTMLButtonElement;
+    if (scrollButton && this._scrollButtonVisible) {
+      this._scrollButtonVisible = false;
+      scrollButton.classList.remove('visible');
+    }
   }
 
   connectedCallback() {
@@ -151,12 +160,25 @@ export class BBMsgHistory extends HTMLElement {
       <div class="history" role="log" aria-live="polite" aria-label="Message history">
         ${messagesHtml}
       </div>
+      ${buildScrollButtonHtml()}
     `;
 
     requestAnimationFrame(() => {
       const container = this.shadowRoot!.querySelector('.history') as HTMLElement;
+      const scrollButton = this.shadowRoot!.querySelector('.scroll-to-bottom') as HTMLButtonElement;
+
       if (container) {
         container.scrollTop = container.scrollHeight;
+        this._setupScrollTracking(container, scrollButton);
+      }
+
+      if (scrollButton) {
+        scrollButton.addEventListener('click', () => {
+          container?.scrollTo({
+            top: container.scrollHeight,
+            behavior: 'smooth'
+          });
+        });
       }
 
       setupTooltips(this.shadowRoot!);
@@ -168,5 +190,28 @@ export class BBMsgHistory extends HTMLElement {
       <style>${EMPTY_STYLES}</style>
       <div class="empty-state">No messages</div>
     `;
+  }
+
+  private _setupScrollTracking(container: HTMLElement, button: HTMLButtonElement): void {
+    const checkScrollPosition = () => {
+      const threshold = 50; // pixels from bottom
+      const isAtBottom = container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
+      const hasOverflow = container.scrollHeight > container.clientHeight;
+      const shouldShow = !isAtBottom && hasOverflow;
+
+      if (shouldShow !== this._scrollButtonVisible) {
+        this._scrollButtonVisible = shouldShow;
+        button.classList.toggle('visible', shouldShow);
+      }
+    };
+
+    // Check initial state
+    checkScrollPosition();
+
+    // Listen for scroll events with passive listener for performance
+    container.addEventListener('scroll', checkScrollPosition, { passive: true });
+
+    // Also check on resize
+    window.addEventListener('resize', checkScrollPosition, { passive: true });
   }
 }

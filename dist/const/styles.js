@@ -23,6 +23,28 @@ export const MAIN_STYLES = `
     scroll-behavior: smooth;
     background-color: transparent;
     border-radius: 0.5rem;
+    /* Firefox scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: ${THEME.gray[400]} transparent;
+  }
+
+  /* Custom scrollbar for webkit browsers */
+  .history::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .history::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 3px;
+  }
+
+  .history::-webkit-scrollbar-thumb {
+    background: ${THEME.gray[400]};
+    border-radius: 3px;
+  }
+
+  .history::-webkit-scrollbar-thumb:hover {
+    background: ${THEME.gray[500]};
   }
 
   /* Message row layout */
@@ -184,6 +206,16 @@ export const MAIN_STYLES = `
 
     .history {
       background-color: transparent;
+      /* Firefox scrollbar dark mode */
+      scrollbar-color: ${THEME.gray[600]} transparent;
+    }
+
+    .history::-webkit-scrollbar-thumb {
+      background: ${THEME.gray[600]};
+    }
+
+    .history::-webkit-scrollbar-thumb:hover {
+      background: ${THEME.gray[500]};
     }
 
     .msg-bubble {

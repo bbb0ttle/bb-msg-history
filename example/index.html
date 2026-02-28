@@ -505,15 +505,13 @@
       <p>Use plain text with <code>author: message</code> format. Each author gets a letter avatar by default.</p>
       <div class="preview">
         <bb-msg-history>
-          alice: Hey, are you free this weekend?
-          bob: Sounds good! When?
-          alice: Saturday morning, around 10?
-          bob: Perfect. See you then!
+          bbki.ng: 谁呀
+          xwy: 谁谁谁，你猴爷爷！
         </bb-msg-history>
       </div>
       <pre><code>&lt;bb-msg-history&gt;
-  alice: Hey, are you free this weekend?
-  bob: Sounds good! When?
+  bbki.ng: 谁呀
+  xwy: 谁谁谁，你猴爷爷！
 &lt;/bb-msg-history&gt;</code></pre>
 
       <h2 id="custom-avatar">Custom Avatars</h2>
@@ -675,7 +673,7 @@ el.appendMessage({ author: 'bob', text: 'How are you?' });</code></pre>
       <script>
         customElements.whenDefined('bb-msg-history').then(() => {
           const el = document.getElementById('multi-party-demo');
-          el.setAuthor('me', { avatar: '😎', side: 'right', bubbleColor: '#fafafa' });
+          el.setAuthor('me', { avatar: '😎', side: 'right', bubbleColor: '#f5f5f5' });
           el.setAuthor('alice', { avatar: '👩', side: 'left', bubbleColor: '#e0f2fe' });
           el.setAuthor('bob', { avatar: '👨', side: 'left', bubbleColor: '#ecfdf5' });
         });

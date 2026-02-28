@@ -45,6 +45,28 @@
 
     html {
       scroll-behavior: smooth;
+      /* Firefox scrollbar */
+      scrollbar-width: thin;
+      scrollbar-color: var(--scrollbar-thumb) transparent;
+    }
+
+    /* WebKit scrollbar for html */
+    html::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    html::-webkit-scrollbar-track {
+      background: transparent;
+      border-radius: 3px;
+    }
+
+    html::-webkit-scrollbar-thumb {
+      background: var(--scrollbar-thumb);
+      border-radius: 3px;
+    }
+
+    html::-webkit-scrollbar-thumb:hover {
+      background: var(--scrollbar-thumb-hover);
     }
 
     body {

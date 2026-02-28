@@ -32,6 +32,7 @@ export interface AuthorOptions {
 /** Theme color palette */
 export interface Theme {
   gray: Record<string, string>;
+  slate: Record<string, string>;
   red: Record<string, string>;
   yyPink: Record<string, string>;
 }

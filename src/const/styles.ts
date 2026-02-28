@@ -13,6 +13,8 @@ export const MAIN_STYLES = `
       "Noto Color Emoji";
     --bb-bg-color: ${THEME.gray[50]};
     --bb-max-height: 600px;
+    --bb-avatar-bg: #ffffff;
+    --bb-avatar-color: ${THEME.gray[600]};
   }
 
   .history {
@@ -213,6 +215,7 @@ export const MAIN_STYLES = `
   /* Right bubble */
   .msg-bubble--right {
     border-bottom-right-radius: 0.25rem;
+    color: ${THEME.gray[900]};
   }
 
   /* Empty state */
@@ -255,15 +258,71 @@ export const MAIN_STYLES = `
     }
   }
 
-  /* Dark mode */
+  /* Dark mode styles - shared between media query and attribute */
+  :host([theme="dark"]) {
+    --bb-bg-color: ${THEME.gray[900]};
+    --bb-avatar-bg: ${THEME.slate[600]};
+    --bb-avatar-color: ${THEME.slate[200]};
+  }
+
+  :host([theme="dark"]) .history {
+    background-color: transparent;
+    scrollbar-color: ${THEME.gray[600]} transparent;
+  }
+
+  :host([theme="dark"]) .history::-webkit-scrollbar-thumb {
+    background: ${THEME.gray[600]};
+  }
+
+  :host([theme="dark"]) .history::-webkit-scrollbar-thumb:hover {
+    background: ${THEME.gray[500]};
+  }
+
+  :host([theme="dark"]) .msg-bubble {
+    color: ${THEME.slate[100]};
+  }
+
+  :host([theme="dark"]) .msg-bubble--right {
+    background-color: ${THEME.slate[700]};
+    color: ${THEME.slate[100]};
+  }
+
+  :host([theme="dark"]) .msg-bubble--left {
+    background-color: ${THEME.slate[800]};
+    border: 1px solid ${THEME.slate[700]};
+    color: ${THEME.slate[100]};
+  }
+
+  :host([theme="dark"]) .avatar-wrapper {
+    background: ${THEME.slate[600]};
+  }
+
+  :host([theme="dark"]) .empty-state {
+    color: ${THEME.gray[500]};
+  }
+
+  :host([theme="dark"]) .scroll-to-bottom {
+    background: ${THEME.slate[800]};
+    border: none;
+    color: ${THEME.slate[300]};
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  }
+
+  :host([theme="dark"]) .scroll-to-bottom:hover {
+    color: ${THEME.slate[200]};
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  }
+
+  /* System dark mode preference */
   @media (prefers-color-scheme: dark) {
     :host {
       --bb-bg-color: ${THEME.gray[900]};
+      --bb-avatar-bg: ${THEME.slate[600]};
+      --bb-avatar-color: ${THEME.slate[200]};
     }
 
     .history {
       background-color: transparent;
-      /* Firefox scrollbar dark mode */
       scrollbar-color: ${THEME.gray[600]} transparent;
     }
 
@@ -276,16 +335,22 @@ export const MAIN_STYLES = `
     }
 
     .msg-bubble {
-      color: ${THEME.gray[100]};
+      color: ${THEME.slate[100]};
+    }
+
+    .msg-bubble--right {
+      background-color: ${THEME.slate[700]};
+      color: ${THEME.slate[100]};
     }
 
     .msg-bubble--left {
-      background-color: ${THEME.gray[700]};
-      color: ${THEME.gray[100]};
+      background-color: ${THEME.slate[800]};
+      border: 1px solid ${THEME.slate[700]};
+      color: ${THEME.slate[100]};
     }
 
     .avatar-wrapper {
-      background: ${THEME.gray[800]};
+      background: ${THEME.slate[600]};
     }
 
     .empty-state {
@@ -293,14 +358,14 @@ export const MAIN_STYLES = `
     }
 
     .scroll-to-bottom {
-      background: transparent;
+      background: ${THEME.slate[800]};
       border: none;
-      color: ${THEME.gray[400]};
+      color: ${THEME.slate[300]};
       box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
     }
 
     .scroll-to-bottom:hover {
-      color: ${THEME.gray[300]};
+      color: ${THEME.slate[200]};
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
     }
   }

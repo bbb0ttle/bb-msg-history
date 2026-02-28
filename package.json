@@ -26,13 +26,39 @@
   "scripts": {
     "start": "tsc -w",
     "preview": "python3 -m http.server 8000",
-    "prepare": "tsc && cp dist/index.js dist/index.dev.js && terser dist/index.js --compress --mangle -o dist/index.js"
+    "prepare": "tsc && cp dist/index.js dist/index.dev.js && terser dist/index.js --compress --mangle --source-map -o dist/index.js",
+    "build": "tsc && cp dist/index.js dist/index.dev.js && terser dist/index.js --compress --mangle --source-map -o dist/index.js",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "release": "release-it"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   },
   "publishConfig": {
     "access": "public"
   },
   "devDependencies": {
+    "@eslint/js": "^9.21.0",
+    "@release-it/conventional-changelog": "^10.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.25.0",
+    "@typescript-eslint/parser": "^8.25.0",
+    "eslint": "^9.21.0",
+    "globals": "^16.0.0",
+    "happy-dom": "^17.1.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.3",
+    "prettier": "^3.5.2",
+    "release-it": "^18.0.0",
     "terser": "^5.46.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^3.0.0"
   }
 }

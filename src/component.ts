@@ -12,9 +12,17 @@ export class BBMsgHistory extends HTMLElement {
   private _lastAuthor = '';
   private _scrollButtonVisible = false;
 
+  static get observedAttributes() {
+    return ['theme'];
+  }
+
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
+  }
+
+  attributeChangedCallback() {
+    this.render();
   }
 
   /**
@@ -53,22 +61,22 @@ export class BBMsgHistory extends HTMLElement {
     const currentText = this.textContent || '';
     const separator = currentText && !currentText.endsWith('\n') ? '\n' : '';
     this.textContent = currentText + separator + `${message.author}: ${message.text}`;
-    
+
     // Temporarily disconnect observer to prevent recursive render
     this._mutationObserver?.disconnect();
-    
+
     // Append single message without re-rendering entire list
     this._appendSingleMessage(message);
-    
+
     // Reconnect observer
     this._setupMutationObserver();
-    
+
     return this;
   }
 
   private _appendSingleMessage(message: Message): void {
     const container = this.shadowRoot!.querySelector('.history') as HTMLElement;
-    
+
     // If empty state or no container, do full render first
     if (!container) {
       this.render();
@@ -80,25 +88,25 @@ export class BBMsgHistory extends HTMLElement {
     const config = resolveAuthorConfig(author, this._userAuthors);
     const isFirstFromAuthor = author !== this._lastAuthor;
     this._lastAuthor = author;
-    
+
     const isSubsequent = !isFirstFromAuthor;
-    
+
     // Use utility function to build message HTML
     const msgHtml = buildMessageRowHtml(author, text, config, isSubsequent);
-    
+
     // Append to container
     container.insertAdjacentHTML('beforeend', msgHtml);
-    
+
     // Setup tooltip for new element using utility function
     const newWrapper = container.lastElementChild?.querySelector('.avatar-wrapper');
     if (newWrapper) {
       setupTooltipForElement(newWrapper);
     }
-    
+
     // Smooth scroll to bottom
     container.scrollTo({
       top: container.scrollHeight,
-      behavior: 'smooth'
+      behavior: 'smooth',
     });
 
     // Hide scroll button since we're scrolling to bottom
@@ -133,7 +141,7 @@ export class BBMsgHistory extends HTMLElement {
 
   private render() {
     const messages = parseMessages(this.textContent);
-    
+
     if (messages.length === 0) {
       this._lastAuthor = '';
       this._renderEmpty();
@@ -147,7 +155,7 @@ export class BBMsgHistory extends HTMLElement {
         const isFirstFromAuthor = author !== lastAuthor;
         lastAuthor = author;
         const isSubsequent = !isFirstFromAuthor;
-        
+
         // Use utility function to build message HTML
         return buildMessageRowHtml(author, text, config, isSubsequent);
       })
@@ -176,7 +184,7 @@ export class BBMsgHistory extends HTMLElement {
         scrollButton.addEventListener('click', () => {
           container?.scrollTo({
             top: container.scrollHeight,
-            behavior: 'smooth'
+            behavior: 'smooth',
           });
         });
       }
@@ -195,7 +203,8 @@ export class BBMsgHistory extends HTMLElement {
   private _setupScrollTracking(container: HTMLElement, button: HTMLButtonElement): void {
     const checkScrollPosition = () => {
       const threshold = 50; // pixels from bottom
-      const isAtBottom = container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
+      const isAtBottom =
+        container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
       const hasOverflow = container.scrollHeight > container.clientHeight;
       const shouldShow = !isAtBottom && hasOverflow;
 

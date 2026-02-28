@@ -51,9 +51,13 @@ export function resolveAuthorConfig(
     const config = AUTHOR_CONFIG[author];
     const firstChar = author.charAt(0);
     return {
-      ...(config || { bubbleColor: THEME.gray[50], textColor: THEME.gray[900], side: 'left' as const }),
+      ...(config || {
+        bubbleColor: THEME.gray[50],
+        textColor: THEME.gray[900],
+        side: 'left' as const,
+      }),
       avatar: generateLetterAvatar(firstChar),
-      isCustomAvatar: false
+      isCustomAvatar: false,
     };
   }
 
@@ -68,7 +72,7 @@ export function resolveAuthorConfig(
       return { ...config, isCustomAvatar: true };
     }
   }
-  
+
   // 6. Default: letter avatar, left side
   const firstChar = author.charAt(0).toUpperCase();
   return {
@@ -76,6 +80,6 @@ export function resolveAuthorConfig(
     bubbleColor: THEME.gray[50],
     textColor: THEME.gray[900],
     side: 'left',
-    isCustomAvatar: false
+    isCustomAvatar: false,
   };
 }

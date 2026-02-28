@@ -1,4 +1,3 @@
-import { THEME } from '../const/theme.js';
 import { FALLBACK_STYLES } from '../const/styles.js';
 
 /**
@@ -9,9 +8,9 @@ export function define(
   tagName = 'bb-msg-history'
 ): void {
   if (!customElements.get(tagName)) {
-    customElements.define(tagName, tagName === 'bb-msg-history'
-      ? BBMsgHistoryClass
-      : class extends BBMsgHistoryClass {}
+    customElements.define(
+      tagName,
+      tagName === 'bb-msg-history' ? BBMsgHistoryClass : class extends BBMsgHistoryClass {}
     );
   }
 }
@@ -23,8 +22,9 @@ export function initBBMsgHistory(BBMsgHistoryClass: CustomElementConstructor): v
   try {
     define(BBMsgHistoryClass);
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.warn('BBMsgHistory registration failed, falling back to plain text:', error);
-    
+
     document.querySelectorAll('bb-msg-history').forEach(el => {
       const pre = document.createElement('pre');
       pre.style.cssText = FALLBACK_STYLES;

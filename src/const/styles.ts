@@ -114,7 +114,7 @@ export const MAIN_STYLES = `
   }
 
   .msg-row--subsequent {
-    margin-top: 0.125rem;
+    margin-top: 0.375rem;
   }
 
   .msg-row--new-author {
@@ -193,6 +193,34 @@ export const MAIN_STYLES = `
   .msg-content {
     display: flex;
     flex-direction: column;
+    position: relative;
+  }
+
+  /* Timestamp styles */
+  .msg-timestamp {
+    position: absolute;
+    font-size: 11px;
+    color: ${THEME.gray[400]};
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    white-space: nowrap;
+    bottom: -12px;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .msg-timestamp--left {
+    left: 0;
+  }
+
+  .msg-timestamp--right {
+    right: 0;
+  }
+
+  .msg-row:hover .msg-timestamp {
+    opacity: 1;
+    visibility: visible;
   }
 
   .msg-bubble {

@@ -10,6 +10,7 @@ export class BBMsgHistory extends HTMLElement {
   private _mutationObserver?: MutationObserver;
   private _userAuthors = new Map<string, AuthorOptions>();
   private _lastAuthor = '';
+  private _lastGroupTimestamp: string | undefined;
   private _scrollButtonVisible = false;
 
   static get observedAttributes() {
@@ -85,14 +86,43 @@ export class BBMsgHistory extends HTMLElement {
 
     const author = message.author;
     const text = message.text;
+    const timestamp = message.timestamp;
     const config = resolveAuthorConfig(author, this._userAuthors);
-    const isFirstFromAuthor = author !== this._lastAuthor;
+
+    // Check if this can group with the last message
+    // Same author AND (no timestamp conflict)
+    const canGroupWithLast =
+      author === this._lastAuthor &&
+      (!this._lastGroupTimestamp || !timestamp || this._lastGroupTimestamp === timestamp);
+
+    const isFirstFromAuthor = !canGroupWithLast;
     this._lastAuthor = author;
 
     const isSubsequent = !isFirstFromAuthor;
 
+    // Update group timestamp tracking
+    if (isFirstFromAuthor) {
+      // Start new group
+      this._lastGroupTimestamp = timestamp;
+    } else if (!this._lastGroupTimestamp && timestamp) {
+      // If no timestamp in group yet and current has one, use it
+      this._lastGroupTimestamp = timestamp;
+    }
+
+    // When appending, we assume this IS the last in group (for now)
+    // If another message from same author comes, we'll re-render
+    const isLastInGroup = true;
+    const groupTimestamp = this._lastGroupTimestamp;
+
     // Use utility function to build message HTML
-    const msgHtml = buildMessageRowHtml(author, text, config, isSubsequent);
+    const msgHtml = buildMessageRowHtml(
+      author,
+      text,
+      config,
+      isSubsequent,
+      groupTimestamp,
+      isLastInGroup
+    );
 
     // Append to container
     container.insertAdjacentHTML('beforeend', msgHtml);
@@ -144,20 +174,73 @@ export class BBMsgHistory extends HTMLElement {
 
     if (messages.length === 0) {
       this._lastAuthor = '';
+      this._lastGroupTimestamp = undefined;
       this._renderEmpty();
       return;
     }
 
+    // Helper: Check if two messages can be grouped (same author, no timestamp conflict)
+    const canGroup = (prev: Message, curr: Message): boolean => {
+      if (prev.author !== curr.author) return false;
+      // Different timestamps = break group
+      if (prev.timestamp && curr.timestamp && prev.timestamp !== curr.timestamp) {
+        return false;
+      }
+      return true;
+    };
+
+    // First pass: determine which messages are last in their group
+    const lastInGroupFlags: boolean[] = messages.map((msg, i) => {
+      const next = messages[i + 1];
+      return !next || !canGroup(msg, next);
+    });
+
+    // Second pass: collect the timestamp for each group
+    // Use the first non-empty timestamp in the group
+    const groupTimestamps = new Map<number, string | undefined>();
+    let currentGroupTimestamp: string | undefined;
+
+    messages.forEach((msg, i) => {
+      // Start of a new group
+      if (i === 0 || !canGroup(messages[i - 1], msg)) {
+        currentGroupTimestamp = msg.timestamp;
+      } else if (!currentGroupTimestamp && msg.timestamp) {
+        // If no timestamp yet and current msg has one, use it
+        currentGroupTimestamp = msg.timestamp;
+      }
+
+      // If this is the last message in the group, save the timestamp
+      if (lastInGroupFlags[i]) {
+        groupTimestamps.set(i, currentGroupTimestamp);
+        currentGroupTimestamp = undefined;
+      }
+    });
+
+    // Third pass: build HTML
     let lastAuthor = '';
     const messagesHtml = messages
-      .map(({ author, text }) => {
+      .map((msg, i) => {
+        const { author, text } = msg;
         const config = resolveAuthorConfig(author, this._userAuthors);
-        const isFirstFromAuthor = author !== lastAuthor;
+
+        // Determine if this is a new author group (can't group with previous)
+        const isFirstFromAuthor = i === 0 || !canGroup(messages[i - 1], msg);
         lastAuthor = author;
         const isSubsequent = !isFirstFromAuthor;
 
+        // Get timestamp if this is the last in group
+        const isLastInGroup = lastInGroupFlags[i];
+        const groupTimestamp = groupTimestamps.get(i);
+
         // Use utility function to build message HTML
-        return buildMessageRowHtml(author, text, config, isSubsequent);
+        return buildMessageRowHtml(
+          author,
+          text,
+          config,
+          isSubsequent,
+          groupTimestamp,
+          isLastInGroup
+        );
       })
       .join('');
 

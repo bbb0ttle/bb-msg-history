@@ -6,6 +6,7 @@
 export interface Message {
   author: string;
   text: string;
+  timestamp?: string;
 }
 
 /** Internal author configuration with resolved values */

@@ -482,6 +482,7 @@
           <div class="nav-title">Examples</div>
           <ul class="nav-list">
             <li><a href="#basic">Basic Usage</a></li>
+            <li><a href="#timestamps">Timestamps</a></li>
             <li><a href="#custom-avatar">Custom Avatars</a></li>
             <li><a href="#append">Append Messages</a></li>
             <li><a href="#grouping">Message Grouping</a></li>
@@ -516,6 +517,25 @@
       <pre><code>&lt;bb-msg-history&gt;
   bbki.ng: 谁呀
   xwy: 谁谁谁，你猴爷爷！
+&lt;/bb-msg-history&gt;</code></pre>
+
+      <h2 id="timestamps">Timestamps</h2>
+      <p>Add optional timestamps using the <code>[timestamp] author: text</code> format. Timestamps appear on hover near the message bubble.</p>
+      <div class="preview">
+        <bb-msg-history>
+[09:00] alice: Good morning!
+[09:02] bob: Hey, how are you?
+[09:05] alice: Pretty good, thanks
+alice: (no timestamp here - backward compatible)
+[09:08] bob: Same here
+        </bb-msg-history>
+      </div>
+      <pre><code>&lt;bb-msg-history&gt;
+[09:00] alice: Good morning!
+[09:02] bob: Hey, how are you?
+[09:05] alice: Pretty good, thanks
+alice: (no timestamp here - backward compatible)
+[09:08] bob: Same here
 &lt;/bb-msg-history&gt;</code></pre>
 
       <h2 id="custom-avatar">Custom Avatars</h2>

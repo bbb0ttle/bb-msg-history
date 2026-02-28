@@ -485,10 +485,8 @@
             <li><a href="#custom-avatar">Custom Avatars</a></li>
             <li><a href="#append">Append Messages</a></li>
             <li><a href="#grouping">Message Grouping</a></li>
-            <li><a href="#fuzzy">Fuzzy Matching</a></li>
             <li><a href="#scrollable">Scrollable View</a></li>
             <li><a href="#multiparty">Multi-party</a></li>
-            <li><a href="#dark-mode">Dark Mode</a></li>
           </ul>
         </div>
       </nav>
@@ -535,12 +533,12 @@
       <script>
         customElements.whenDefined('bb-msg-history').then(() => {
           const el = document.getElementById('custom-avatar-demo');
-          el.setAuthor('me', { avatar: '🐱', side: 'right', bubbleColor: '#f3f4f6' });
-          el.setAuthor('friend', { avatar: '🐶', side: 'left', bubbleColor: '#e0f2fe' });
+          el.setAuthor('me', { avatar: '<div style="width: 50%; height: 50%; margin: auto"><svg data-testid="geist-icon" height="16" stroke-linejoin="round" viewBox="0 0 16 16" width="16" style="color: currentcolor;"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.75 0C5.95507 0 4.5 1.45507 4.5 3.25V3.75C4.5 5.54493 5.95507 7 7.75 7H8.25C10.0449 7 11.5 5.54493 11.5 3.75V3.25C11.5 1.45507 10.0449 0 8.25 0H7.75ZM6 3.25C6 2.2835 6.7835 1.5 7.75 1.5H8.25C9.2165 1.5 10 2.2835 10 3.25V3.75C10 4.7165 9.2165 5.5 8.25 5.5H7.75C6.7835 5.5 6 4.7165 6 3.75V3.25ZM2.5 14.5V13.1709C3.31958 11.5377 4.99308 10.5 6.82945 10.5H9.17055C11.0069 10.5 12.6804 11.5377 13.5 13.1709V14.5H2.5ZM6.82945 9C4.35483 9 2.10604 10.4388 1.06903 12.6857L1 12.8353V13V15.25V16H1.75H14.25H15V15.25V13V12.8353L14.931 12.6857C13.894 10.4388 11.6452 9 9.17055 9H6.82945Z" fill="currentColor"></path></svg></div>', side: 'right', bubbleColor: '#f3f4f6' });
+          el.setAuthor('friend', { avatar: '<div style="width: 50%; height: 50%; margin: auto"><svg data-testid="geist-icon" height="16" stroke-linejoin="round" viewBox="0 0 16 16" width="16" style="color: currentcolor;"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.75 0C5.95507 0 4.5 1.45507 4.5 3.25V3.75C4.5 5.54493 5.95507 7 7.75 7H8.25C10.0449 7 11.5 5.54493 11.5 3.75V3.25C11.5 1.45507 10.0449 0 8.25 0H7.75ZM6 3.25C6 2.2835 6.7835 1.5 7.75 1.5H8.25C9.2165 1.5 10 2.2835 10 3.25V3.75C10 4.7165 9.2165 5.5 8.25 5.5H7.75C6.7835 5.5 6 4.7165 6 3.75V3.25ZM2.5 14.5V13.1709C3.31958 11.5377 4.99308 10.5 6.82945 10.5H9.17055C11.0069 10.5 12.6804 11.5377 13.5 13.1709V14.5H2.5ZM6.82945 9C4.35483 9 2.10604 10.4388 1.06903 12.6857L1 12.8353V13V15.25V16H1.75H14.25H15V15.25V13V12.8353L14.931 12.6857C13.894 10.4388 11.6452 9 9.17055 9H6.82945Z" fill="currentColor"></path></svg></div>', side: 'left', bubbleColor: '#e0f2fe' });
         });
       </script>
-      <pre><code>el.setAuthor('me', { avatar: '🐱', side: 'right', bubbleColor: '#f3f4f6' });
-el.setAuthor('friend', { avatar: '🐶', side: 'left', bubbleColor: '#e0f2fe' });</code></pre>
+      <pre><code>el.setAuthor('me', { avatar: '&lt;svg&gt;...&lt;/svg&gt;', side: 'right', bubbleColor: '#f3f4f6' });
+el.setAuthor('friend', { avatar: '&lt;svg&gt;...&lt;/svg&gt;', side: 'left', bubbleColor: '#e0f2fe' });</code></pre>
 
       <h2 id="append">Append Messages</h2>
       <p>Use <code>appendMessage()</code> to add messages programmatically with smooth scrolling.</p>
@@ -576,8 +574,8 @@ el.setAuthor('friend', { avatar: '🐶', side: 'left', bubbleColor: '#e0f2fe' })
           let bobIdx = 0;
           
           customElements.whenDefined('bb-msg-history').then(() => {
-            el.setAuthor('alice', { avatar: '👩', side: 'right', bubbleColor: '#e0f2fe' });
-            el.setAuthor('bob', { avatar: '👨', side: 'left', bubbleColor: '#ecfdf5' });
+            el.setAuthor('alice', { avatar: '<div style="width: 50%; height: 50%; margin: auto"><svg data-testid="geist-icon" height="16" stroke-linejoin="round" viewBox="0 0 16 16" width="16" style="color: currentcolor;"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.75 0C5.95507 0 4.5 1.45507 4.5 3.25V3.75C4.5 5.54493 5.95507 7 7.75 7H8.25C10.0449 7 11.5 5.54493 11.5 3.75V3.25C11.5 1.45507 10.0449 0 8.25 0H7.75ZM6 3.25C6 2.2835 6.7835 1.5 7.75 1.5H8.25C9.2165 1.5 10 2.2835 10 3.25V3.75C10 4.7165 9.2165 5.5 8.25 5.5H7.75C6.7835 5.5 6 4.7165 6 3.75V3.25ZM2.5 14.5V13.1709C3.31958 11.5377 4.99308 10.5 6.82945 10.5H9.17055C11.0069 10.5 12.6804 11.5377 13.5 13.1709V14.5H2.5ZM6.82945 9C4.35483 9 2.10604 10.4388 1.06903 12.6857L1 12.8353V13V15.25V16H1.75H14.25H15V15.25V13V12.8353L14.931 12.6857C13.894 10.4388 11.6452 9 9.17055 9H6.82945Z" fill="currentColor"></path></svg></div>', side: 'right', bubbleColor: '#e0f2fe' });
+            el.setAuthor('bob', { avatar: '<div style="width: 50%; height: 50%; margin: auto"><svg data-testid="geist-icon" height="16" stroke-linejoin="round" viewBox="0 0 16 16" width="16" style="color: currentcolor;"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.75 0C5.95507 0 4.5 1.45507 4.5 3.25V3.75C4.5 5.54493 5.95507 7 7.75 7H8.25C10.0449 7 11.5 5.54493 11.5 3.75V3.25C11.5 1.45507 10.0449 0 8.25 0H7.75ZM6 3.25C6 2.2835 6.7835 1.5 7.75 1.5H8.25C9.2165 1.5 10 2.2835 10 3.25V3.75C10 4.7165 9.2165 5.5 8.25 5.5H7.75C6.7835 5.5 6 4.7165 6 3.75V3.25ZM2.5 14.5V13.1709C3.31958 11.5377 4.99308 10.5 6.82945 10.5H9.17055C11.0069 10.5 12.6804 11.5377 13.5 13.1709V14.5H2.5ZM6.82945 9C4.35483 9 2.10604 10.4388 1.06903 12.6857L1 12.8353V13V15.25V16H1.75H14.25H15V15.25V13V12.8353L14.931 12.6857C13.894 10.4388 11.6452 9 9.17055 9H6.82945Z" fill="currentColor"></path></svg></div>', side: 'left', bubbleColor: '#ecfdf5' });
           });
           
           aliceBtn.addEventListener('click', () => {
@@ -614,26 +612,8 @@ el.appendMessage({ author: 'bob', text: 'How are you?' });</code></pre>
       <script>
         customElements.whenDefined('bb-msg-history').then(() => {
           const el = document.getElementById('grouping-demo');
-          el.setAuthor('alice', { avatar: '👩', side: 'right', bubbleColor: '#f5f5f5' });
-          el.setAuthor('bob', { avatar: '👨', side: 'left', bubbleColor: '#ecfdf5' });
-        });
-      </script>
-
-      <h2 id="fuzzy">Fuzzy Matching</h2>
-      <p>Author names containing a configured key will reuse that config. For example, <code>"alice(phone)"</code> matches <code>"alice"</code>.</p>
-      <div class="preview">
-        <bb-msg-history id="fuzzy-demo">
-          alice: Normal message from alice
-          alice(phone): This name contains "alice", reuses her config
-          alice_work: This too!
-          bob: Just bob
-        </bb-msg-history>
-      </div>
-      <script>
-        customElements.whenDefined('bb-msg-history').then(() => {
-          const el = document.getElementById('fuzzy-demo');
-          el.setAuthor('alice', { avatar: '👩', side: 'right', bubbleColor: '#e0f2fe' });
-          el.setAuthor('bob', { avatar: '👨', side: 'left' });
+          el.setAuthor('alice', { avatar: '<div style="width: 50%; height: 50%; margin: auto"><svg data-testid="geist-icon" height="16" stroke-linejoin="round" viewBox="0 0 16 16" width="16" style="color: currentcolor;"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.75 0C5.95507 0 4.5 1.45507 4.5 3.25V3.75C4.5 5.54493 5.95507 7 7.75 7H8.25C10.0449 7 11.5 5.54493 11.5 3.75V3.25C11.5 1.45507 10.0449 0 8.25 0H7.75ZM6 3.25C6 2.2835 6.7835 1.5 7.75 1.5H8.25C9.2165 1.5 10 2.2835 10 3.25V3.75C10 4.7165 9.2165 5.5 8.25 5.5H7.75C6.7835 5.5 6 4.7165 6 3.75V3.25ZM2.5 14.5V13.1709C3.31958 11.5377 4.99308 10.5 6.82945 10.5H9.17055C11.0069 10.5 12.6804 11.5377 13.5 13.1709V14.5H2.5ZM6.82945 9C4.35483 9 2.10604 10.4388 1.06903 12.6857L1 12.8353V13V15.25V16H1.75H14.25H15V15.25V13V12.8353L14.931 12.6857C13.894 10.4388 11.6452 9 9.17055 9H6.82945Z" fill="currentColor"></path></svg></div>', side: 'right', bubbleColor: '#f5f5f5' });
+          el.setAuthor('bob', { avatar: '<div style="width: 50%; height: 50%; margin: auto"><svg data-testid="geist-icon" height="16" stroke-linejoin="round" viewBox="0 0 16 16" width="16" style="color: currentcolor;"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.75 0C5.95507 0 4.5 1.45507 4.5 3.25V3.75C4.5 5.54493 5.95507 7 7.75 7H8.25C10.0449 7 11.5 5.54493 11.5 3.75V3.25C11.5 1.45507 10.0449 0 8.25 0H7.75ZM6 3.25C6 2.2835 6.7835 1.5 7.75 1.5H8.25C9.2165 1.5 10 2.2835 10 3.25V3.75C10 4.7165 9.2165 5.5 8.25 5.5H7.75C6.7835 5.5 6 4.7165 6 3.75V3.25ZM2.5 14.5V13.1709C3.31958 11.5377 4.99308 10.5 6.82945 10.5H9.17055C11.0069 10.5 12.6804 11.5377 13.5 13.1709V14.5H2.5ZM6.82945 9C4.35483 9 2.10604 10.4388 1.06903 12.6857L1 12.8353V13V15.25V16H1.75H14.25H15V15.25V13V12.8353L14.931 12.6857C13.894 10.4388 11.6452 9 9.17055 9H6.82945Z" fill="currentColor"></path></svg></div>', side: 'left', bubbleColor: '#ecfdf5' });
         });
       </script>
 
@@ -679,24 +659,11 @@ el.appendMessage({ author: 'bob', text: 'How are you?' });</code></pre>
       <script>
         customElements.whenDefined('bb-msg-history').then(() => {
           const el = document.getElementById('multi-party-demo');
-          el.setAuthor('me', { avatar: '😎', side: 'right', bubbleColor: '#f5f5f5' });
-          el.setAuthor('alice', { avatar: '👩', side: 'left', bubbleColor: '#e0f2fe' });
-          el.setAuthor('bob', { avatar: '👨', side: 'left', bubbleColor: '#ecfdf5' });
+          el.setAuthor('me', { avatar: '<div style="width: 50%; height: 50%; margin: auto"><svg data-testid="geist-icon" height="16" stroke-linejoin="round" viewBox="0 0 16 16" width="16" style="color: currentcolor;"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.75 0C5.95507 0 4.5 1.45507 4.5 3.25V3.75C4.5 5.54493 5.95507 7 7.75 7H8.25C10.0449 7 11.5 5.54493 11.5 3.75V3.25C11.5 1.45507 10.0449 0 8.25 0H7.75ZM6 3.25C6 2.2835 6.7835 1.5 7.75 1.5H8.25C9.2165 1.5 10 2.2835 10 3.25V3.75C10 4.7165 9.2165 5.5 8.25 5.5H7.75C6.7835 5.5 6 4.7165 6 3.75V3.25ZM2.5 14.5V13.1709C3.31958 11.5377 4.99308 10.5 6.82945 10.5H9.17055C11.0069 10.5 12.6804 11.5377 13.5 13.1709V14.5H2.5ZM6.82945 9C4.35483 9 2.10604 10.4388 1.06903 12.6857L1 12.8353V13V15.25V16H1.75H14.25H15V15.25V13V12.8353L14.931 12.6857C13.894 10.4388 11.6452 9 9.17055 9H6.82945Z" fill="currentColor"></path></svg></div>', side: 'right', bubbleColor: '#f5f5f5' });
+          el.setAuthor('alice', { avatar: '<div style="width: 50%; height: 50%; margin: auto"><svg data-testid="geist-icon" height="16" stroke-linejoin="round" viewBox="0 0 16 16" width="16" style="color: currentcolor;"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.75 0C5.95507 0 4.5 1.45507 4.5 3.25V3.75C4.5 5.54493 5.95507 7 7.75 7H8.25C10.0449 7 11.5 5.54493 11.5 3.75V3.25C11.5 1.45507 10.0449 0 8.25 0H7.75ZM6 3.25C6 2.2835 6.7835 1.5 7.75 1.5H8.25C9.2165 1.5 10 2.2835 10 3.25V3.75C10 4.7165 9.2165 5.5 8.25 5.5H7.75C6.7835 5.5 6 4.7165 6 3.75V3.25ZM2.5 14.5V13.1709C3.31958 11.5377 4.99308 10.5 6.82945 10.5H9.17055C11.0069 10.5 12.6804 11.5377 13.5 13.1709V14.5H2.5ZM6.82945 9C4.35483 9 2.10604 10.4388 1.06903 12.6857L1 12.8353V13V15.25V16H1.75H14.25H15V15.25V13V12.8353L14.931 12.6857C13.894 10.4388 11.6452 9 9.17055 9H6.82945Z" fill="currentColor"></path></svg></div>', side: 'left', bubbleColor: '#e0f2fe' });
+          el.setAuthor('bob', { avatar: '<div style="width: 50%; height: 50%; margin: auto"><svg data-testid="geist-icon" height="16" stroke-linejoin="round" viewBox="0 0 16 16" width="16" style="color: currentcolor;"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.75 0C5.95507 0 4.5 1.45507 4.5 3.25V3.75C4.5 5.54493 5.95507 7 7.75 7H8.25C10.0449 7 11.5 5.54493 11.5 3.75V3.25C11.5 1.45507 10.0449 0 8.25 0H7.75ZM6 3.25C6 2.2835 6.7835 1.5 7.75 1.5H8.25C9.2165 1.5 10 2.2835 10 3.25V3.75C10 4.7165 9.2165 5.5 8.25 5.5H7.75C6.7835 5.5 6 4.7165 6 3.75V3.25ZM2.5 14.5V13.1709C3.31958 11.5377 4.99308 10.5 6.82945 10.5H9.17055C11.0069 10.5 12.6804 11.5377 13.5 13.1709V14.5H2.5ZM6.82945 9C4.35483 9 2.10604 10.4388 1.06903 12.6857L1 12.8353V13V15.25V16H1.75H14.25H15V15.25V13V12.8353L14.931 12.6857C13.894 10.4388 11.6452 9 9.17055 9H6.82945Z" fill="currentColor"></path></svg></div>', side: 'left', bubbleColor: '#ecfdf5' });
         });
       </script>
-
-      <h2 id="dark-mode">Dark Mode</h2>
-      <p>Automatically adapts to system dark mode preference via <code>prefers-color-scheme</code>. Features cool blue-tinted slate colors for better visual hierarchy.</p>
-      <div class="preview" style="background: #0f172a; border-radius: 8px;">
-        <bb-msg-history theme="dark">
-          alice: Dark mode conversation
-          bob: Adapts automatically
-          alice: Cool blue-tinted bubbles
-          bob: Better visual hierarchy
-          charlie: Letter avatars too!
-        </bb-msg-history>
-      </div>
-      <p>Toggle your system dark mode to see it everywhere, or use <code>&lt;bb-msg-history theme="dark"&gt;</code> to force dark mode.</p>
 
       <footer style="margin-top: 90px; padding-top: 90px;" class="dotted dotted-top">
         <p style="font-size: 14px; color: var(--muted);">

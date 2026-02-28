@@ -1,5 +1,20 @@
 # Changelog
 
+# [0.6.0](https://github.com/bbb0ttle/bb-msg-history/compare/v0.5.0...v0.6.0) (2026-02-28)
+
+
+### Bug Fixes
+
+* add .npmrc to .gitignore ([14f6203](https://github.com/bbb0ttle/bb-msg-history/commit/14f6203815b4acda792ea6bbe66c1c9de6156720))
+* update .gitignore to include ./dist and refine tsconfig includes ([c3a8e8b](https://github.com/bbb0ttle/bb-msg-history/commit/c3a8e8b949529e790ee9b81747c934c09ec2ba85))
+* update avatar implementation in examples and remove unused sections ([609d329](https://github.com/bbb0ttle/bb-msg-history/commit/609d329f94dcb0a14baf1ee64f2a10bcf9947c5a))
+
+
+### Features
+
+* add optional timestamp support for messages and update parsing logic ([10b04a7](https://github.com/bbb0ttle/bb-msg-history/commit/10b04a7b05f657e27803d7bf723d422ef4b0625b))
+* add web design guidelines skill and update skills-lock.json ([7006594](https://github.com/bbb0ttle/bb-msg-history/commit/7006594ba4420a722fd120d76bf84d061ac8b32c))
+
 # 0.5.0 (2026-02-28)
 
 

@@ -44,9 +44,13 @@ export function resolveAuthorConfig(author, userAuthors) {
         const config = AUTHOR_CONFIG[author];
         const firstChar = author.charAt(0);
         return {
-            ...(config || { bubbleColor: THEME.gray[50], textColor: THEME.gray[900], side: 'left' }),
+            ...(config || {
+                bubbleColor: THEME.gray[50],
+                textColor: THEME.gray[900],
+                side: 'left',
+            }),
             avatar: generateLetterAvatar(firstChar),
-            isCustomAvatar: false
+            isCustomAvatar: false,
         };
     }
     // 4. Built-in exact match
@@ -66,6 +70,6 @@ export function resolveAuthorConfig(author, userAuthors) {
         bubbleColor: THEME.gray[50],
         textColor: THEME.gray[900],
         side: 'left',
-        isCustomAvatar: false
+        isCustomAvatar: false,
     };
 }

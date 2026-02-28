@@ -4,7 +4,9 @@ export declare class BBMsgHistory extends HTMLElement {
     private _userAuthors;
     private _lastAuthor;
     private _scrollButtonVisible;
+    static get observedAttributes(): string[];
     constructor();
+    attributeChangedCallback(): void;
     /**
      * Configure an author's avatar, side, and colors.
      * Call before or after rendering — the component re-renders automatically.

@@ -4,10 +4,8 @@ import { FALLBACK_STYLES } from '../const/styles.js';
  */
 export function define(BBMsgHistoryClass, tagName = 'bb-msg-history') {
     if (!customElements.get(tagName)) {
-        customElements.define(tagName, tagName === 'bb-msg-history'
-            ? BBMsgHistoryClass
-            : class extends BBMsgHistoryClass {
-            });
+        customElements.define(tagName, tagName === 'bb-msg-history' ? BBMsgHistoryClass : class extends BBMsgHistoryClass {
+        });
     }
 }
 /**
@@ -18,6 +16,7 @@ export function initBBMsgHistory(BBMsgHistoryClass) {
         define(BBMsgHistoryClass);
     }
     catch (error) {
+        // eslint-disable-next-line no-console
         console.warn('BBMsgHistory registration failed, falling back to plain text:', error);
         document.querySelectorAll('bb-msg-history').forEach(el => {
             const pre = document.createElement('pre');

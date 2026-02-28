@@ -5,12 +5,18 @@ import { setupTooltips } from './utils/tooltip.js';
 import { buildMessageRowHtml, setupTooltipForElement } from './utils/message-builder.js';
 import { buildScrollButtonHtml } from './utils/scroll-button.js';
 export class BBMsgHistory extends HTMLElement {
+    static get observedAttributes() {
+        return ['theme'];
+    }
     constructor() {
         super();
         this._userAuthors = new Map();
         this._lastAuthor = '';
         this._scrollButtonVisible = false;
         this.attachShadow({ mode: 'open' });
+    }
+    attributeChangedCallback() {
+        this.render();
     }
     /**
      * Configure an author's avatar, side, and colors.
@@ -79,7 +85,7 @@ export class BBMsgHistory extends HTMLElement {
         // Smooth scroll to bottom
         container.scrollTo({
             top: container.scrollHeight,
-            behavior: 'smooth'
+            behavior: 'smooth',
         });
         // Hide scroll button since we're scrolling to bottom
         const scrollButton = this.shadowRoot.querySelector('.scroll-to-bottom');
@@ -144,7 +150,7 @@ export class BBMsgHistory extends HTMLElement {
                 scrollButton.addEventListener('click', () => {
                     container?.scrollTo({
                         top: container.scrollHeight,
-                        behavior: 'smooth'
+                        behavior: 'smooth',
                     });
                 });
             }

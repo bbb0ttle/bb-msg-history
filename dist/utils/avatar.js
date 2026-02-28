@@ -4,14 +4,14 @@ import { THEME } from '../const/theme.js';
  */
 export function generateLetterAvatar(letter) {
     return `<div style="
-    width: 100%; 
-    height: 100%; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    background: #ffffff; 
-    color: ${THEME.gray[600]}; 
-    font-size: 14px; 
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bb-avatar-bg, #ffffff);
+    color: var(--bb-avatar-color, ${THEME.gray[600]});
+    font-size: 14px;
     font-weight: 600;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
   ">${letter}</div>`;

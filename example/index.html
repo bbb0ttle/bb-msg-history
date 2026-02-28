@@ -682,16 +682,17 @@ el.appendMessage({ author: 'bob', text: 'How are you?' });</code></pre>
       </script>
 
       <h2 id="dark-mode">Dark Mode</h2>
-      <p>Automatically adapts to system dark mode preference via <code>prefers-color-scheme</code>.</p>
-      <div class="preview" style="background: #111827;">
-        <bb-msg-history style="color-scheme: dark;">
+      <p>Automatically adapts to system dark mode preference via <code>prefers-color-scheme</code>. Features cool blue-tinted slate colors for better visual hierarchy.</p>
+      <div class="preview" style="background: #0f172a; border-radius: 8px;">
+        <bb-msg-history theme="dark">
           alice: Dark mode conversation
           bob: Adapts automatically
-          alice: Bubbles and backgrounds change
-          bob: Nice!
+          alice: Cool blue-tinted bubbles
+          bob: Better visual hierarchy
+          charlie: Letter avatars too!
         </bb-msg-history>
       </div>
-      <p>Toggle your system dark mode to see it everywhere, or this card forces a dark background.</p>
+      <p>Toggle your system dark mode to see it everywhere, or use <code>&lt;bb-msg-history theme="dark"&gt;</code> to force dark mode.</p>
 
       <footer style="margin-top: 90px; padding-top: 90px;" class="dotted dotted-top">
         <p style="font-size: 14px; color: var(--muted);">

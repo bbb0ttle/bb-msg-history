@@ -4,7 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>bb-msg-history</title>
-  <script src="../dist/index.js" type="module"></script>
+  <script type="module">
+  const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  const src = isLocal
+    ? '../dist/index.js'
+    : 'https://cdn.jsdelivr.net/npm/@bbki.ng/bb-msg-history@latest/dist/index.js';
+  import(src);
+</script>
   <style>
     :root {
       --bg: #fff;

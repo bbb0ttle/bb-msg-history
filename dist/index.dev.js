@@ -1,1 +1,0 @@
-import{BBMsgHistory}from"./component.js";import{initBBMsgHistory}from"./utils/registration.js";"loading"===document.readyState?document.addEventListener("DOMContentLoaded",()=>initBBMsgHistory(BBMsgHistory)):initBBMsgHistory(BBMsgHistory);export{BBMsgHistory};export{define}from"./utils/registration.js";

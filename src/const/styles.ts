@@ -247,6 +247,15 @@ export const MAIN_STYLES = `
     color: ${THEME.gray[900]};
   }
 
+  /* Subsequent messages - all corners rounded */
+  .msg-row--subsequent .msg-bubble--left {
+    border-bottom-left-radius: 1rem;
+  }
+
+  .msg-row--subsequent .msg-bubble--right {
+    border-bottom-right-radius: 1rem;
+  }
+
   /* Empty state */
   .empty-state {
     text-align: center;

@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.6.1](https://github.com/bbb0ttle/bb-msg-history/compare/v0.6.0...v0.6.1) (2026-03-01)
+
+
+### Bug Fixes
+
+* update bubbleColor in AUTHOR_CONFIG to use THEME.gray[200] ([a4cfaf0](https://github.com/bbb0ttle/bb-msg-history/commit/a4cfaf09cd82683f7ba3f10bbe958c0d8484c1b5))
+* update CDN link to specific version 0.6.0 in index.html ([70ffb92](https://github.com/bbb0ttle/bb-msg-history/commit/70ffb92b614612e448788ba87094a7fcee645630))
+* update eslint config to ignore test files and vitest configuration ([1a9ff6e](https://github.com/bbb0ttle/bb-msg-history/commit/1a9ff6e5f642c8d528a3d327406f6c95cccacf5a))
+
+
+### Features
+
+* add timestamps to message display and adjust styles for better layout ([f523f4f](https://github.com/bbb0ttle/bb-msg-history/commit/f523f4f5afe9c1ba51aceb718396ba1ddb6b9a5f))
+* rounded corners for subsequent messages in groups ([958c8f5](https://github.com/bbb0ttle/bb-msg-history/commit/958c8f5a85ee19bb0cb803ac4485824d9d7fb8c1))
+
 # [0.6.0](https://github.com/bbb0ttle/bb-msg-history/compare/v0.5.0...v0.6.0) (2026-02-28)
 
 

@@ -30,6 +30,6 @@ export default [
     },
   },
   {
-    ignores: ['dist/**', 'node_modules/**', '_site/**'],
+    ignores: ['dist/**', 'node_modules/**', '_site/**', 'tests/**', 'vitest.config.ts'],
   },
 ];

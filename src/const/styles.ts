@@ -194,6 +194,7 @@ export const MAIN_STYLES = `
     display: flex;
     flex-direction: column;
     position: relative;
+    padding-bottom: 12px;
   }
 
   /* Timestamp styles */
@@ -205,7 +206,7 @@ export const MAIN_STYLES = `
     visibility: hidden;
     transition: opacity 0.2s ease, visibility 0.2s ease;
     white-space: nowrap;
-    bottom: -12px;
+    bottom: 1px;
     line-height: 1;
     pointer-events: none;
   }

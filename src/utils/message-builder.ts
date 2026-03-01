@@ -58,10 +58,10 @@ export function buildMessageRowHtml(
       ${side === 'left' ? avatarHtml : ''}
 
       <div class="msg-content">
-        ${timestampHtml}
         <div class="msg-bubble msg-bubble--${side}"${styleAttr}>
           ${escapeHtml(text)}
         </div>
+        ${timestampHtml}
       </div>
 
       ${side === 'right' ? avatarHtml : ''}

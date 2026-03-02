@@ -101,6 +101,35 @@ Returns `this` for chaining. This is ideal for chat applications where messages 
 
 **Note:** Unlike modifying `textContent` directly, `appendMessage()` scrolls smoothly to the newly added message.
 
+### `setLoading(isLoading)`
+
+Show or hide a loading animation overlay. Useful when fetching messages from an API.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `isLoading` | `boolean` | `true` to show loading, `false` to hide |
+
+```js
+const el = document.querySelector('bb-msg-history');
+
+// Show loading
+el.setLoading(true);
+
+// Fetch messages
+fetchMessages().then(messages => {
+  // Hide loading and display messages
+  el.setLoading(false);
+});
+```
+
+You can also use the HTML attribute:
+
+```html
+<bb-msg-history loading>
+  alice: Loading previous messages...
+</bb-msg-history>
+```
+
 ## Customization
 
 ### CSS Custom Properties
@@ -138,6 +167,7 @@ define('my-chat-history');
 - Consecutive messages from the same author are grouped (avatar hidden)
 - Auto-scroll to the latest message on render
 - **`appendMessage()` API** — programmatically add messages with smooth scroll
+- **`setLoading()` API** — show loading animation while fetching messages
 - Long text word-wrap and overflow handling
 - Empty state when no messages are provided
 - Dark mode support via `prefers-color-scheme`
@@ -231,6 +261,34 @@ Use `appendMessage()` to add messages programmatically with smooth scrolling:
   setTimeout(() => {
     el.appendMessage({ author: 'bob', text: 'Nice to hear that!' });
   }, 2000);
+</script>
+```
+
+### Loading state
+
+Show a loading animation while fetching messages from an API:
+
+```html
+<bb-msg-history id="chat" loading>
+  <!-- Messages will be loaded -->
+</bb-msg-history>
+
+<script>
+  const el = document.getElementById('chat');
+
+  // Show loading (already set via HTML attribute above)
+  // el.setLoading(true);
+
+  // Fetch messages from API
+  fetch('/api/messages')
+    .then(res => res.json())
+    .then(messages => {
+      // Hide loading and populate messages
+      el.setLoading(false);
+      messages.forEach(msg => {
+        el.appendMessage({ author: msg.author, text: msg.text });
+      });
+    });
 </script>
 ```
 

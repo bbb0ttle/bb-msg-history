@@ -448,6 +448,69 @@ export const EMPTY_STYLES = `
 `;
 
 /**
+ * Loading overlay styles with elegant spinner
+ */
+export const LOADING_STYLES = `
+  .loading-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(1px);
+    z-index: 20;
+    border-radius: 0.5rem;
+    min-height: 120px;
+  }
+
+  .loading-spinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid ${THEME.gray[200]};
+    border-top-color: ${THEME.gray[500]};
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Dark mode support */
+  :host([theme="dark"]) .loading-overlay {
+    background: rgba(17, 24, 39, 0.6);
+  }
+
+  :host([theme="dark"]) .loading-spinner {
+    border-color: ${THEME.gray[700]};
+    border-top-color: ${THEME.gray[400]};
+  }
+
+  /* System dark mode preference */
+  @media (prefers-color-scheme: dark) {
+    :host .loading-overlay {
+      background: rgba(17, 24, 39, 0.6);
+    }
+
+    :host .loading-spinner {
+      border-color: ${THEME.gray[700]};
+      border-top-color: ${THEME.gray[400]};
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .loading-spinner {
+      animation-duration: 1.5s;
+      opacity: 0.8;
+    }
+  }
+`;
+
+/**
  * Fallback styles for when custom elements are not supported
  */
 export const FALLBACK_STYLES = `

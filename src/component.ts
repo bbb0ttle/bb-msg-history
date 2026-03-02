@@ -1,5 +1,5 @@
 import type { AuthorOptions, Message } from './types/index.js';
-import { MAIN_STYLES, EMPTY_STYLES } from './const/styles.js';
+import { EMPTY_STYLES, LOADING_STYLES, MAIN_STYLES } from './const/styles.js';
 import { parseMessages } from './utils/message-parser.js';
 import { resolveAuthorConfig } from './utils/author-resolver.js';
 import { setupTooltips } from './utils/tooltip.js';
@@ -14,7 +14,7 @@ export class BBMsgHistory extends HTMLElement {
   private _scrollButtonVisible = false;
 
   static get observedAttributes() {
-    return ['theme'];
+    return ['theme', 'loading'];
   }
 
   constructor() {
@@ -22,8 +22,10 @@ export class BBMsgHistory extends HTMLElement {
     this.attachShadow({ mode: 'open' });
   }
 
-  attributeChangedCallback() {
-    this.render();
+  attributeChangedCallback(name: string) {
+    if (name === 'theme' || name === 'loading') {
+      this.render();
+    }
   }
 
   /**
@@ -46,6 +48,18 @@ export class BBMsgHistory extends HTMLElement {
   removeAuthor(name: string): this {
     this._userAuthors.delete(name);
     this.render();
+    return this;
+  }
+
+  /**
+   * Show or hide the loading overlay.
+   *
+   * @example
+   * el.setLoading(true);  // Show loading animation
+   * el.setLoading(false); // Hide loading animation
+   */
+  setLoading(isLoading: boolean): this {
+    this.toggleAttribute('loading', isLoading);
     return this;
   }
 
@@ -246,12 +260,19 @@ export class BBMsgHistory extends HTMLElement {
 
     this._lastAuthor = lastAuthor;
 
+    const loadingOverlay = this.hasAttribute('loading')
+      ? `<div class="loading-overlay" role="status" aria-label="Loading messages">
+          <div class="loading-spinner"></div>
+        </div>`
+      : '';
+
     this.shadowRoot!.innerHTML = `
-      <style>${MAIN_STYLES}</style>
+      <style>${MAIN_STYLES}${LOADING_STYLES}</style>
       <div class="history" role="log" aria-live="polite" aria-label="Message history">
         ${messagesHtml}
       </div>
       ${buildScrollButtonHtml()}
+      ${loadingOverlay}
     `;
 
     requestAnimationFrame(() => {
@@ -277,10 +298,24 @@ export class BBMsgHistory extends HTMLElement {
   }
 
   private _renderEmpty() {
-    this.shadowRoot!.innerHTML = `
-      <style>${EMPTY_STYLES}</style>
-      <div class="empty-state">No messages</div>
-    `;
+    const isLoading = this.hasAttribute('loading');
+
+    if (isLoading) {
+      // Show loading overlay with minimum height for better appearance
+      this.shadowRoot!.innerHTML = `
+        <style>${EMPTY_STYLES}${LOADING_STYLES}</style>
+        <div style="position: relative; min-height: 120px;">
+          <div class="loading-overlay" role="status" aria-label="Loading messages">
+            <div class="loading-spinner"></div>
+          </div>
+        </div>
+      `;
+    } else {
+      this.shadowRoot!.innerHTML = `
+        <style>${EMPTY_STYLES}</style>
+        <div class="empty-state">No messages</div>
+      `;
+    }
   }
 
   private _setupScrollTracking(container: HTMLElement, button: HTMLButtonElement): void {

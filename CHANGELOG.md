@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.3](https://github.com/bbb0ttle/bb-msg-history/compare/v0.7.2...v0.7.3) (2026-03-02)
+
+
+### Features
+
+* add GitHub author config ([b9d17a1](https://github.com/bbb0ttle/bb-msg-history/commit/b9d17a16255046592373c790a48523ccc5d5c9bb))
+
 ## [0.7.2](https://github.com/bbb0ttle/bb-msg-history/compare/v0.7.1...v0.7.2) (2026-03-02)
 
 

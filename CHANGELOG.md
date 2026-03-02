@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/bbb0ttle/bb-msg-history/compare/v0.7.0...v0.7.1) (2026-03-02)
+
+
+### Features
+
+* add loading property and animation ([a93f216](https://github.com/bbb0ttle/bb-msg-history/commit/a93f216037aea9a68e7b81332b49ab362704d49f))
+
 ## [0.6.1](https://github.com/bbb0ttle/bb-msg-history/compare/v0.6.0...v0.6.1) (2026-03-01)
 
 

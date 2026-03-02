@@ -8,7 +8,7 @@
   const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
   const src = isLocal
     ? '../dist/index.js'
-    : 'https://cdn.jsdelivr.net/npm/@bbki.ng/bb-msg-history@latest/dist/index.js';
+    : 'https://cdn.jsdelivr.net/npm/@bbki.ng/bb-msg-history@0.7.1/dist/index.js';
   import(src);
 </script>
   <style>
@@ -665,7 +665,7 @@ el.appendMessage({ author: 'bob', text: 'How are you?' });</code></pre>
       <h2 id="multiparty">Multi-party Chat</h2>
       <p>Support for more than two participants in a conversation.</p>
       <div class="preview">
-        <bb-msg-history id="multi-party-demo">
+        <bb-msg-history id="multi-party-demo" style="--bb-max-height: 700px">
           me: Hey everyone, let's have a meeting
           alice: Sure thing
           bob: On my way

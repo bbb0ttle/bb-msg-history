@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.7.2](https://github.com/bbb0ttle/bb-msg-history/compare/v0.7.1...v0.7.2) (2026-03-02)
+
+
+### Bug Fixes
+
+* preserve DOM structure when re-rendering to fix avatar updates ([536387a](https://github.com/bbb0ttle/bb-msg-history/commit/536387af7d604dbcfce60be500f7e544d56592e1))
+* update CDN link to specific version and add max height style for multi-party demo ([d17c449](https://github.com/bbb0ttle/bb-msg-history/commit/d17c449ee7266acbf852d8aa60593e39ca715767))
+
+
+### Features
+
+* add GitHub link and copy button for install command in example ([ed9c027](https://github.com/bbb0ttle/bb-msg-history/commit/ed9c0277c899786a59443bca4dfa616336b27da9))
+
 ## [0.7.1](https://github.com/bbb0ttle/bb-msg-history/compare/v0.7.0...v0.7.1) (2026-03-02)
 
 

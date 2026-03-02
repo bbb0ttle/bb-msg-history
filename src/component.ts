@@ -260,6 +260,20 @@ export class BBMsgHistory extends HTMLElement {
 
     this._lastAuthor = lastAuthor;
 
+    // Check if we need to create or update the structure
+    const historyContainer = this.shadowRoot!.querySelector('.history') as HTMLElement;
+    const needsFullSetup = !historyContainer;
+
+    if (needsFullSetup) {
+      // First render - create full structure
+      this._renderFullStructure(messagesHtml);
+    } else {
+      // Update only - preserve DOM structure, just update content
+      this._updateContent(historyContainer, messagesHtml);
+    }
+  }
+
+  private _renderFullStructure(messagesHtml: string): void {
     const loadingOverlay = this.hasAttribute('loading')
       ? `<div class="loading-overlay" role="status" aria-label="Loading messages">
           <div class="loading-spinner"></div>
@@ -275,6 +289,47 @@ export class BBMsgHistory extends HTMLElement {
       ${loadingOverlay}
     `;
 
+    this._setupAfterRender();
+  }
+
+  private _updateContent(historyContainer: HTMLElement, messagesHtml: string): void {
+    // Preserve scroll position before update
+    const scrollContainer = historyContainer;
+    const wasAtBottom =
+      scrollContainer.scrollHeight - scrollContainer.scrollTop - scrollContainer.clientHeight < 50;
+
+    // Update messages content only
+    historyContainer.innerHTML = messagesHtml;
+
+    // Update loading overlay
+    this._updateLoadingOverlay();
+
+    // Restore scroll position or scroll to bottom if we were there
+    if (wasAtBottom) {
+      scrollContainer.scrollTop = scrollContainer.scrollHeight;
+    }
+
+    // Re-setup tooltips for new content
+    setupTooltips(this.shadowRoot!);
+  }
+
+  private _updateLoadingOverlay(): void {
+    const existingOverlay = this.shadowRoot!.querySelector('.loading-overlay');
+    const shouldShow = this.hasAttribute('loading');
+
+    if (shouldShow && !existingOverlay) {
+      const overlay = document.createElement('div');
+      overlay.className = 'loading-overlay';
+      overlay.setAttribute('role', 'status');
+      overlay.setAttribute('aria-label', 'Loading messages');
+      overlay.innerHTML = '<div class="loading-spinner"></div>';
+      this.shadowRoot!.appendChild(overlay);
+    } else if (!shouldShow && existingOverlay) {
+      existingOverlay.remove();
+    }
+  }
+
+  private _setupAfterRender(): void {
     requestAnimationFrame(() => {
       const container = this.shadowRoot!.querySelector('.history') as HTMLElement;
       const scrollButton = this.shadowRoot!.querySelector('.scroll-to-bottom') as HTMLButtonElement;

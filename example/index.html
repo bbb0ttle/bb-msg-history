@@ -21,6 +21,7 @@
       --light-bg: #fafafa;
       --border: #eaeaea;
       --accent: #0066cc;
+      --yyPink: #ec4899;
       --radius: 8px;
       --sidebar-width: 240px;
       --transparent-dotted-border: #ccc;
@@ -38,6 +39,7 @@
         --muted-bg: #111;
         --border: #222;
         --accent: #60a5fa;
+        --yyPink: #f472b6;
         --scrollbar-thumb: #4b5563;
         --scrollbar-thumb-hover: #6b7280;
       }
@@ -122,6 +124,8 @@
       /* Firefox scrollbar */
       scrollbar-width: thin;
       scrollbar-color: var(--scrollbar-thumb) transparent;
+      display: flex;
+      flex-direction: column;
     }
 
     .sidebar::-webkit-scrollbar {
@@ -204,6 +208,31 @@
       color: var(--fg);
       background: var(--muted-bg);
       font-weight: 500;
+    }
+
+    .github-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      padding: 8px 12px;
+      border-radius: var(--radius);
+      transition: all 0.15s;
+      margin-top: auto;
+    }
+
+    .github-link:hover {
+      color: var(--fg);
+      background: var(--muted-bg);
+    }
+
+    .github-link svg {
+      width: 16px;
+      height: 16px;
+      position: relative;
+      top: -1px;
     }
 
     /* Main content */
@@ -386,11 +415,63 @@
       border-radius: var(--radius);
       padding: 16px 20px;
       margin: 16px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
     }
 
     .install-box code {
       background: transparent;
       font-size: 14px;
+    }
+
+    .copy-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+      position: relative;
+      width: 24px;
+      height: 24px;
+    }
+
+    .copy-btn:hover {
+      color: var(--fg);
+      background: var(--border);
+    }
+
+    .copy-btn svg {
+      position: absolute;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .copy-btn .copy-icon {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    .copy-btn .check-icon {
+      transform: scale(0.8);
+      opacity: 0;
+      color: #35ba66 !important;
+    }
+
+    .copy-btn.copied .copy-icon {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+
+    .copy-btn.copied .check-icon {
+      transform: scale(1);
+      opacity: 1;
     }
 
     /* Divider */
@@ -492,6 +573,19 @@
           </ul>
         </div>
       </nav>
+      <a href="https://github.com/bbb0ttle/bb-msg-history" target="_blank" rel="noopener noreferrer" class="github-link">
+        <svg data-testid="geist-icon" height="16" stroke-linejoin="round" viewBox="0 0 16 16" width="16" style="color: currentcolor;">
+          <g clip-path="url(#clip0_872_3147)">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M8 0C3.58 0 0 3.57879 0 7.99729C0 11.5361 2.29 14.5251 5.47 15.5847C5.87 15.6547 6.02 15.4148 6.02 15.2049C6.02 15.0149 6.01 14.3851 6.01 13.7154C4 14.0852 3.48 13.2255 3.32 12.7757C3.23 12.5458 2.84 11.836 2.5 11.6461C2.22 11.4961 1.82 11.1262 2.49 11.1162C3.12 11.1062 3.57 11.696 3.72 11.936C4.44 13.1455 5.59 12.8057 6.05 12.5957C6.12 12.0759 6.33 11.726 6.56 11.5261C4.78 11.3262 2.92 10.6364 2.92 7.57743C2.92 6.70773 3.23 5.98797 3.74 5.42816C3.66 5.22823 3.38 4.40851 3.82 3.30888C3.82 3.30888 4.49 3.09895 6.02 4.1286C6.66 3.94866 7.34 3.85869 8.02 3.85869C8.7 3.85869 9.38 3.94866 10.02 4.1286C11.55 3.08895 12.22 3.30888 12.22 3.30888C12.66 4.40851 12.38 5.22823 12.3 5.42816C12.81 5.98797 13.12 6.69773 13.12 7.57743C13.12 10.6464 11.25 11.3262 9.47 11.5261C9.76 11.776 10.01 12.2558 10.01 13.0056C10.01 14.0752 10 14.9349 10 15.2049C10 15.4148 10.15 15.6647 10.55 15.5847C12.1381 15.0488 13.5182 14.0284 14.4958 12.6673C15.4735 11.3062 15.9996 9.67293 16 7.99729C16 3.57879 12.42 0 8 0Z" fill="currentColor"></path>
+          </g>
+          <defs>
+            <clipPath id="clip0_872_3147">
+              <rect width="16" height="16" fill="white"></rect>
+            </clipPath>
+          </defs>
+        </svg>
+        GitHub
+      </a>
     </aside>
 
     <!-- Main content -->
@@ -503,6 +597,16 @@
       <p>Install the component from your command line.</p>
       <div class="install-box">
         <code>npm install @bbki.ng/bb-msg-history</code>
+        <button class="copy-btn" aria-label="Copy install command">
+          <!-- Copy icon -->
+          <svg class="copy-icon" data-testid="geist-icon" height="16" stroke-linejoin="round" style="color:currentColor" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M2.75 0.5C1.7835 0.5 1 1.2835 1 2.25V9.75C1 10.7165 1.7835 11.5 2.75 11.5H3.75H4.5V10H3.75H2.75C2.61193 10 2.5 9.88807 2.5 9.75V2.25C2.5 2.11193 2.61193 2 2.75 2H8.25C8.38807 2 8.5 2.11193 8.5 2.25V3H10V2.25C10 1.2835 9.2165 0.5 8.25 0.5H2.75ZM7.75 4.5C6.7835 4.5 6 5.2835 6 6.25V13.75C6 14.7165 6.7835 15.5 7.75 15.5H13.25C14.2165 15.5 15 14.7165 15 13.75V6.25C15 5.2835 14.2165 4.5 13.25 4.5H7.75ZM7.5 6.25C7.5 6.11193 7.61193 6 7.75 6H13.25C13.3881 6 13.5 6.11193 13.5 6.25V13.75C13.5 13.8881 13.3881 14 13.25 14H7.75C7.61193 14 7.5 13.8881 7.5 13.75V6.25Z" fill="currentColor"></path>
+          </svg>
+          <!-- Check icon (hidden by default) -->
+          <svg class="check-icon" data-testid="geist-icon" height="16" stroke-linejoin="round" viewBox="0 0 16 16" width="16" style="color: currentcolor;">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M15.5607 3.99999L15.0303 4.53032L6.23744 13.3232C5.55403 14.0066 4.44599 14.0066 3.76257 13.3232L4.2929 12.7929L3.76257 13.3232L0.969676 10.5303L0.439346 9.99999L1.50001 8.93933L2.03034 9.46966L4.82323 12.2626C4.92086 12.3602 5.07915 12.3602 5.17678 12.2626L13.9697 3.46966L14.5 2.93933L15.5607 3.99999Z" fill="currentColor"></path>
+          </svg>
+        </button>
       </div>
       <!-- <p>Or use the CDN version:</p>
       <pre><code>&lt;script type="module" src="https://cdn.jsdelivr.net/npm/@bbki.ng/bb-msg-history@latest/dist/index.js"&gt;&lt;/script&gt;</code></pre> -->
@@ -782,6 +886,25 @@ fetchMessages().then(messages => {
     }, { threshold: 0, rootMargin: '-8% 0px -85% 0px' });
     
     sections.forEach(section => observer.observe(section));
+
+    // Copy install command
+    const copyBtn = document.querySelector('.copy-btn');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', async () => {
+        const code = copyBtn.previousElementSibling.textContent;
+        try {
+          await navigator.clipboard.writeText(code);
+          copyBtn.classList.add('copied');
+          copyBtn.setAttribute('aria-label', 'Copied!');
+          setTimeout(() => {
+            copyBtn.classList.remove('copied');
+            copyBtn.setAttribute('aria-label', 'Copy install command');
+          }, 2000);
+        } catch (err) {
+          console.error('Failed to copy:', err);
+        }
+      });
+    }
   </script>
 </body>
 </html>

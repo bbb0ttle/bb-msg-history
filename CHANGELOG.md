@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.11.0](https://github.com/bbb0ttle/bb-msg-history/compare/v0.10.0...v0.11.0) (2026-03-03)
+
+
+### Features
+
+* add infinite attribute for parent-controlled scrolling ([78c4212](https://github.com/bbb0ttle/bb-msg-history/commit/78c4212f7d71086012f14afb7cb9c0079dde4777))
+
 # [0.10.0](https://github.com/bbb0ttle/bb-msg-history/compare/v0.9.0...v0.10.0) (2026-03-03)
 
 

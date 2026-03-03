@@ -14,7 +14,7 @@ export class BBMsgHistory extends HTMLElement {
   private _scrollButtonVisible = false;
 
   static get observedAttributes() {
-    return ['theme', 'loading', 'hide-scroll-bar'];
+    return ['theme', 'loading', 'hide-scroll-bar', 'infinite'];
   }
 
   constructor() {
@@ -23,7 +23,7 @@ export class BBMsgHistory extends HTMLElement {
   }
 
   attributeChangedCallback(name: string) {
-    if (name === 'theme' || name === 'loading' || name === 'hide-scroll-bar') {
+    if (name === 'theme' || name === 'loading' || name === 'hide-scroll-bar' || name === 'infinite') {
       this.render();
     }
   }
@@ -147,17 +147,19 @@ export class BBMsgHistory extends HTMLElement {
       setupTooltipForElement(newWrapper);
     }
 
-    // Smooth scroll to bottom
-    container.scrollTo({
-      top: container.scrollHeight,
-      behavior: 'smooth',
-    });
+    // Smooth scroll to bottom (skip in infinite mode)
+    if (!this.hasAttribute('infinite')) {
+      container.scrollTo({
+        top: container.scrollHeight,
+        behavior: 'smooth',
+      });
 
-    // Hide scroll button since we're scrolling to bottom
-    const scrollButton = this.shadowRoot!.querySelector('.scroll-to-bottom') as HTMLButtonElement;
-    if (scrollButton && this._scrollButtonVisible) {
-      this._scrollButtonVisible = false;
-      scrollButton.classList.remove('visible');
+      // Hide scroll button since we're scrolling to bottom
+      const scrollButton = this.shadowRoot!.querySelector('.scroll-to-bottom') as HTMLButtonElement;
+      if (scrollButton && this._scrollButtonVisible) {
+        this._scrollButtonVisible = false;
+        scrollButton.classList.remove('visible');
+      }
     }
   }
 
@@ -333,13 +335,14 @@ export class BBMsgHistory extends HTMLElement {
     requestAnimationFrame(() => {
       const container = this.shadowRoot!.querySelector('.history') as HTMLElement;
       const scrollButton = this.shadowRoot!.querySelector('.scroll-to-bottom') as HTMLButtonElement;
+      const isInfinite = this.hasAttribute('infinite');
 
-      if (container) {
+      if (container && !isInfinite) {
         container.scrollTop = container.scrollHeight;
         this._setupScrollTracking(container, scrollButton);
       }
 
-      if (scrollButton) {
+      if (scrollButton && !isInfinite) {
         scrollButton.addEventListener('click', () => {
           container?.scrollTo({
             top: container.scrollHeight,

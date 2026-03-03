@@ -130,6 +130,29 @@ You can also use the HTML attribute:
 </bb-msg-history>
 ```
 
+### `infinite` Attribute
+
+Remove the height constraint and disable scrolling on the component. The container expands to fit all messages.
+
+Use this when:
+- The parent container handles scrolling
+- You want to display an entire conversation without height limits
+- You need the component to be part of a larger scrollable area
+
+```html
+<bb-msg-history infinite>
+  alice: First message
+  bob: Second message
+  alice: Third message
+  <!-- Container keeps expanding to fit all messages -->
+</bb-msg-history>
+```
+
+In infinite mode:
+- No `max-height` constraint is applied
+- No scrollbar appears on the component
+- The scroll-to-bottom button is hidden (not needed)
+
 ## Customization
 
 ### CSS Custom Properties
@@ -175,6 +198,7 @@ define('my-chat-history');
 - `prefers-reduced-motion` support
 - Reactive: automatically re-renders when content changes
 - Customizable max-height via `--bb-max-height` CSS custom property
+- **`infinite` attribute** — remove height constraints for parent-controlled scrolling
 - Graceful degradation to `<pre>` when Custom Elements are unsupported
 
 ## Examples

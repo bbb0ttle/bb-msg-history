@@ -61,6 +61,17 @@ export const MAIN_STYLES = `
     display: none;  /* Chrome, Safari, Opera */
   }
 
+  /* Infinite mode - no max height, no scroll */
+  :host([infinite]) .history {
+    max-height: none;
+    overflow-y: visible;
+  }
+
+  /* Hide scroll button in infinite mode */
+  :host([infinite]) .scroll-to-bottom {
+    display: none;
+  }
+
   /* Scroll to bottom button */
   .scroll-to-bottom {
     position: absolute;

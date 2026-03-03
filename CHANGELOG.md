@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.9.0](https://github.com/bbb0ttle/bb-msg-history/compare/v0.7.3...v0.9.0) (2026-03-03)
+
+
+### Features
+
+* add hide-scroll-bar attribute ([6c0c164](https://github.com/bbb0ttle/bb-msg-history/commit/6c0c164a0e435ca0380ba69b28720725b163b2c7))
+
 ## [0.7.3](https://github.com/bbb0ttle/bb-msg-history/compare/v0.7.2...v0.7.3) (2026-03-02)
 
 

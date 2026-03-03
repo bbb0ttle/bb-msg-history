@@ -69,7 +69,7 @@ export const MAIN_STYLES = `
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: transparent;
+    background: #ffffff;
     border: none;
     color: ${THEME.gray[500]};
     cursor: pointer;
@@ -78,8 +78,8 @@ export const MAIN_STYLES = `
     justify-content: center;
     opacity: 0;
     visibility: hidden;
-    transform: translateX(-50%) translateY(10px) scale(0.9);
-    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+    transform: translateX(-50%) translateY(10px) scale(0);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
     z-index: 10;
   }
@@ -92,12 +92,12 @@ export const MAIN_STYLES = `
 
   .scroll-to-bottom:hover {
     color: ${THEME.gray[700]};
-    transform: translateX(-50%) translateY(-2px);
+    transform: translateX(-50%) translateY(-2px) scale(1.05);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   }
 
   .scroll-to-bottom:active {
-    transform: translateX(-50%) translateY(0) scale(0.95);
+    transform: translateX(-50%) translateY(-1px) scale(0.95);
   }
 
   .scroll-to-bottom svg {
@@ -426,19 +426,19 @@ export const MAIN_STYLES = `
 
     .scroll-to-bottom {
       transition: opacity 0.15s ease, visibility 0.15s ease;
-      transform: translateX(-50%);
+      transform: translateX(-50%) translateY(10px) scale(0);
     }
 
     .scroll-to-bottom.visible {
-      transform: translateX(-50%);
+      transform: translateX(-50%) translateY(0) scale(1);
     }
 
     .scroll-to-bottom:hover {
-      transform: translateX(-50%);
+      transform: translateX(-50%) translateY(-2px) scale(1);
     }
 
     .scroll-to-bottom:active {
-      transform: translateX(-50%);
+      transform: translateX(-50%) translateY(0) scale(0.95);
     }
   }
 `;

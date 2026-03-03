@@ -14,7 +14,7 @@ export class BBMsgHistory extends HTMLElement {
   private _scrollButtonVisible = false;
 
   static get observedAttributes() {
-    return ['theme', 'loading'];
+    return ['theme', 'loading', 'hide-scroll-bar'];
   }
 
   constructor() {
@@ -23,7 +23,7 @@ export class BBMsgHistory extends HTMLElement {
   }
 
   attributeChangedCallback(name: string) {
-    if (name === 'theme' || name === 'loading') {
+    if (name === 'theme' || name === 'loading' || name === 'hide-scroll-bar') {
       this.render();
     }
   }

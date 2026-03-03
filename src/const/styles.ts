@@ -51,6 +51,16 @@ export const MAIN_STYLES = `
     background: ${THEME.gray[500]};
   }
 
+  /* Hide scrollbar styles */
+  :host([hide-scroll-bar]) .history {
+    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;  /* IE/Edge */
+  }
+
+  :host([hide-scroll-bar]) .history::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari, Opera */
+  }
+
   /* Scroll to bottom button */
   .scroll-to-bottom {
     position: absolute;

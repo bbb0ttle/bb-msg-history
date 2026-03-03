@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.10.0](https://github.com/bbb0ttle/bb-msg-history/compare/v0.9.0...v0.10.0) (2026-03-03)
+
+
+### Features
+
+* enhance scroll-to-bottom button animation ([e93a14f](https://github.com/bbb0ttle/bb-msg-history/commit/e93a14f3de5a8bf01be73cf409d1ce9204a1b770))
+
 # [0.9.0](https://github.com/bbb0ttle/bb-msg-history/compare/v0.7.3...v0.9.0) (2026-03-03)
 
 

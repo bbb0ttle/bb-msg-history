@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.1](https://github.com/bbb0ttle/bb-msg-history/compare/v0.11.0...v0.11.1) (2026-03-04)
+
+
+### Bug Fixes
+
+* hide scroll-to-bottom button on initial auto-scroll ([5497ba8](https://github.com/bbb0ttle/bb-msg-history/commit/5497ba81f996730a9c26c2c06a1068a03a1992a7))
+
 # [0.11.0](https://github.com/bbb0ttle/bb-msg-history/compare/v0.10.0...v0.11.0) (2026-03-03)
 
 

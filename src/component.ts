@@ -339,7 +339,7 @@ export class BBMsgHistory extends HTMLElement {
 
       if (container && !isInfinite) {
         container.scrollTop = container.scrollHeight;
-        this._setupScrollTracking(container, scrollButton);
+        this._setupScrollTracking(container, scrollButton, { skipInitialCheck: true });
       }
 
       if (scrollButton && !isInfinite) {
@@ -376,7 +376,11 @@ export class BBMsgHistory extends HTMLElement {
     }
   }
 
-  private _setupScrollTracking(container: HTMLElement, button: HTMLButtonElement): void {
+  private _setupScrollTracking(
+    container: HTMLElement,
+    button: HTMLButtonElement,
+    options?: { skipInitialCheck?: boolean }
+  ): void {
     const checkScrollPosition = () => {
       const threshold = 50; // pixels from bottom
       const isAtBottom =
@@ -390,8 +394,10 @@ export class BBMsgHistory extends HTMLElement {
       }
     };
 
-    // Check initial state
-    checkScrollPosition();
+    // Check initial state unless skipped
+    if (!options?.skipInitialCheck) {
+      checkScrollPosition();
+    }
 
     // Listen for scroll events with passive listener for performance
     container.addEventListener('scroll', checkScrollPosition, { passive: true });

@@ -92,6 +92,30 @@ export class BBMsgHistory extends HTMLElement {
     return this;
   }
 
+  /**
+   * Scroll to the bottom of the message history.
+   *
+   * @example
+   * el.scrollToBottom();  // Scroll with smooth animation
+   */
+  scrollToBottom(): this {
+    if (this.hasAttribute('infinite')) {
+      return this;
+    }
+
+    const container = this.shadowRoot?.querySelector('.history') as HTMLElement | null;
+    if (!container) {
+      return this;
+    }
+
+    container.scrollTo({
+      top: container.scrollHeight,
+      behavior: 'smooth',
+    });
+
+    return this;
+  }
+
   private _appendSingleMessage(message: Message): void {
     const container = this.shadowRoot!.querySelector('.history') as HTMLElement;
 

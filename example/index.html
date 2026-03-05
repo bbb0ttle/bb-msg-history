@@ -916,8 +916,7 @@ fetchMessages().then(messages => {
 
           // Custom scroll button
           btn.addEventListener('click', () => {
-            const container = el.shadowRoot?.querySelector('.history');
-            container?.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+            el.scrollToBottom();
           });
         })();
       </script>
@@ -940,6 +939,9 @@ fetchMessages().then(messages => {
     // Hide custom button
     console.log('Scroll button would hide');
   });
+
+  // Scroll to bottom programmatically
+  el.scrollToBottom();
 &lt;/script&gt;</code></pre>
 
       <footer style="margin-top: 90px; padding-top: 90px;" class="dotted dotted-top">

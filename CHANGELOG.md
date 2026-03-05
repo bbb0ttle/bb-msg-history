@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.12.0](https://github.com/bbb0ttle/bb-msg-history/compare/v0.11.2...v0.12.0) (2026-03-05)
+
+
+### Features
+
+* add scroll button custom events and hide-scroll-button attribute ([06ef381](https://github.com/bbb0ttle/bb-msg-history/commit/06ef381780142b93ecf7bf8378ae59abd37073ce))
+
 ## [0.11.2](https://github.com/bbb0ttle/bb-msg-history/compare/v0.11.1...v0.11.2) (2026-03-04)
 
 

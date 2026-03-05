@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.1](https://github.com/bbb0ttle/bb-msg-history/compare/v0.13.0...v0.13.1) (2026-03-05)
+
+
+### Bug Fixes
+
+* ensure scroll button events fire when hide-scroll-button is set ([bd84f2d](https://github.com/bbb0ttle/bb-msg-history/commit/bd84f2d03fbbd65d16968713f0884904ab78e24c))
+
 # [0.13.0](https://github.com/bbb0ttle/bb-msg-history/compare/v0.12.0...v0.13.0) (2026-03-05)
 
 

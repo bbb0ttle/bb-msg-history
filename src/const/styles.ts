@@ -72,6 +72,11 @@ export const MAIN_STYLES = `
     display: none;
   }
 
+  /* Hide scroll button when explicitly disabled */
+  :host([hide-scroll-button]) .scroll-to-bottom {
+    display: none;
+  }
+
   /* Scroll to bottom button */
   .scroll-to-bottom {
     position: absolute;

@@ -17,7 +17,7 @@ export class BBMsgHistory extends HTMLElement {
   private _lastScrollTop = 0;
 
   static get observedAttributes() {
-    return ['theme', 'loading', 'hide-scroll-bar', 'infinite'];
+    return ['theme', 'loading', 'hide-scroll-bar', 'infinite', 'hide-scroll-button'];
   }
 
   constructor() {
@@ -26,7 +26,7 @@ export class BBMsgHistory extends HTMLElement {
   }
 
   attributeChangedCallback(name: string) {
-    if (name === 'theme' || name === 'loading' || name === 'hide-scroll-bar' || name === 'infinite') {
+    if (name === 'theme' || name === 'loading' || name === 'hide-scroll-bar' || name === 'infinite' || name === 'hide-scroll-button') {
       this.render();
     }
   }
@@ -170,6 +170,15 @@ export class BBMsgHistory extends HTMLElement {
       if (scrollButton && this._scrollButtonVisible) {
         this._scrollButtonVisible = false;
         scrollButton.classList.remove('visible');
+
+        // Dispatch hide event
+        this.dispatchEvent(
+          new CustomEvent('bb-scrollbuttonhide', {
+            bubbles: true,
+            composed: true,
+            detail: { visible: false }
+          })
+        );
       }
     }
   }
@@ -293,12 +302,14 @@ export class BBMsgHistory extends HTMLElement {
         </div>`
       : '';
 
+    const hideScrollButton = this.hasAttribute('hide-scroll-button');
+
     this.shadowRoot!.innerHTML = `
       <style>${MAIN_STYLES}${LOADING_STYLES}</style>
       <div class="history" role="log" aria-live="polite" aria-label="Message history">
         ${messagesHtml}
       </div>
-      ${buildScrollButtonHtml()}
+      ${hideScrollButton ? '' : buildScrollButtonHtml()}
       ${loadingOverlay}
     `;
 
@@ -345,17 +356,20 @@ export class BBMsgHistory extends HTMLElement {
   private _setupAfterRender(): void {
     requestAnimationFrame(() => {
       const container = this.shadowRoot!.querySelector('.history') as HTMLElement;
-      const scrollButton = this.shadowRoot!.querySelector('.scroll-to-bottom') as HTMLButtonElement;
+      const hideScrollButton = this.hasAttribute('hide-scroll-button');
+      const scrollButton = hideScrollButton
+        ? null
+        : (this.shadowRoot!.querySelector('.scroll-to-bottom') as HTMLButtonElement);
       const isInfinite = this.hasAttribute('infinite');
 
-      if (container && !isInfinite) {
+      if (container && !isInfinite && !hideScrollButton) {
         // Mark as programmatic scroll to prevent triggering user scroll detection
         this._isProgrammaticScroll = true;
         container.scrollTop = container.scrollHeight;
         requestAnimationFrame(() => {
           this._isProgrammaticScroll = false;
         });
-        this._setupScrollTracking(container, scrollButton, { skipInitialCheck: true });
+        this._setupScrollTracking(container, scrollButton!, { skipInitialCheck: true });
       }
 
       if (scrollButton && !isInfinite) {
@@ -420,6 +434,15 @@ export class BBMsgHistory extends HTMLElement {
       if (shouldShow !== this._scrollButtonVisible) {
         this._scrollButtonVisible = shouldShow;
         button.classList.toggle('visible', shouldShow);
+
+        // Dispatch custom event
+        this.dispatchEvent(
+          new CustomEvent(shouldShow ? 'bb-scrollbuttonshow' : 'bb-scrollbuttonhide', {
+            bubbles: true,
+            composed: true,
+            detail: { visible: shouldShow }
+          })
+        );
       }
     };
 

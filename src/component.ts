@@ -190,12 +190,14 @@ export class BBMsgHistory extends HTMLElement {
       }, 300);
 
       // Hide scroll button since we're scrolling to bottom
-      const scrollButton = this.shadowRoot!.querySelector('.scroll-to-bottom') as HTMLButtonElement;
-      if (scrollButton && this._scrollButtonVisible) {
+      if (this._scrollButtonVisible) {
         this._scrollButtonVisible = false;
-        scrollButton.classList.remove('visible');
+        const scrollButton = this.shadowRoot!.querySelector('.scroll-to-bottom') as HTMLButtonElement | null;
+        if (scrollButton) {
+          scrollButton.classList.remove('visible');
+        }
 
-        // Dispatch hide event
+        // Dispatch hide event (always, regardless of button visibility)
         this.dispatchEvent(
           new CustomEvent('bb-scrollbuttonhide', {
             bubbles: true,
@@ -380,20 +382,17 @@ export class BBMsgHistory extends HTMLElement {
   private _setupAfterRender(): void {
     requestAnimationFrame(() => {
       const container = this.shadowRoot!.querySelector('.history') as HTMLElement;
-      const hideScrollButton = this.hasAttribute('hide-scroll-button');
-      const scrollButton = hideScrollButton
-        ? null
-        : (this.shadowRoot!.querySelector('.scroll-to-bottom') as HTMLButtonElement);
+      const scrollButton = this.shadowRoot!.querySelector('.scroll-to-bottom') as HTMLButtonElement | null;
       const isInfinite = this.hasAttribute('infinite');
 
-      if (container && !isInfinite && !hideScrollButton) {
+      if (container && !isInfinite) {
         // Mark as programmatic scroll to prevent triggering user scroll detection
         this._isProgrammaticScroll = true;
         container.scrollTop = container.scrollHeight;
         requestAnimationFrame(() => {
           this._isProgrammaticScroll = false;
         });
-        this._setupScrollTracking(container, scrollButton!, { skipInitialCheck: true });
+        this._setupScrollTracking(container, scrollButton, { skipInitialCheck: true });
       }
 
       if (scrollButton && !isInfinite) {
@@ -432,7 +431,7 @@ export class BBMsgHistory extends HTMLElement {
 
   private _setupScrollTracking(
     container: HTMLElement,
-    button: HTMLButtonElement,
+    button: HTMLButtonElement | null,
     options?: { skipInitialCheck?: boolean }
   ): void {
     const checkScrollPosition = () => {
@@ -457,9 +456,12 @@ export class BBMsgHistory extends HTMLElement {
 
       if (shouldShow !== this._scrollButtonVisible) {
         this._scrollButtonVisible = shouldShow;
-        button.classList.toggle('visible', shouldShow);
+        // Only toggle button visibility if button exists
+        if (button) {
+          button.classList.toggle('visible', shouldShow);
+        }
 
-        // Dispatch custom event
+        // Dispatch custom event (always, regardless of button visibility)
         this.dispatchEvent(
           new CustomEvent(shouldShow ? 'bb-scrollbuttonshow' : 'bb-scrollbuttonhide', {
             bubbles: true,

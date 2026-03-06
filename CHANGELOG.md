@@ -1,5 +1,7 @@
 # Changelog
 
+# [1.0.0](https://github.com/bbb0ttle/bb-msg-history/compare/v0.14.1...v1.0.0) (2026-03-06)
+
 ## [0.14.1](https://github.com/bbb0ttle/bb-msg-history/compare/v0.14.0...v0.14.1) (2026-03-06)
 
 

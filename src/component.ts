@@ -12,6 +12,8 @@ export class BBMsgHistory extends HTMLElement {
   private _lastAuthor = '';
   private _lastGroupTimestamp: string | undefined;
   private _scrollButtonVisible = false;
+  private _scrollListeners: Array<{ el: EventTarget; type: string; fn: EventListener }> = [];
+  private _debounceTimer?: ReturnType<typeof setTimeout>;
 
   static get observedAttributes() {
     return ['theme', 'loading', 'hide-scroll-bar', 'infinite', 'hide-scroll-button'];
@@ -20,9 +22,15 @@ export class BBMsgHistory extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
+    // Create MutationObserver once - will be connected in connectedCallback
+    this._mutationObserver = new MutationObserver(() => {
+      clearTimeout(this._debounceTimer);
+      this._debounceTimer = setTimeout(() => this.render(), 50);
+    });
   }
 
-  attributeChangedCallback(name: string) {
+  attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null) {
+    if (oldValue === newValue) return;
     if (name === 'theme' || name === 'loading' || name === 'hide-scroll-bar' || name === 'infinite' || name === 'hide-scroll-button') {
       this.render();
     }
@@ -72,19 +80,24 @@ export class BBMsgHistory extends HTMLElement {
    * el.appendMessage({ author: 'bob', text: 'How are you?' });
    */
   appendMessage(message: Message): this {
+    // Temporarily disconnect observer BEFORE updating textContent to prevent double render
+    this._mutationObserver?.disconnect();
+    clearTimeout(this._debounceTimer);
+
     // Update textContent
     const currentText = this.textContent || '';
     const separator = currentText && !currentText.endsWith('\n') ? '\n' : '';
     this.textContent = currentText + separator + `${message.author}: ${message.text}`;
 
-    // Temporarily disconnect observer to prevent recursive render
-    this._mutationObserver?.disconnect();
-
     // Append single message without re-rendering entire list
     this._appendSingleMessage(message);
 
     // Reconnect observer
-    this._setupMutationObserver();
+    this._mutationObserver?.observe(this, {
+      childList: true,
+      characterData: true,
+      subtree: true,
+    });
 
     return this;
   }
@@ -113,6 +126,19 @@ export class BBMsgHistory extends HTMLElement {
     return this;
   }
 
+  /**
+   * Check if two messages can be grouped (same author, no timestamp conflict)
+   */
+  private _canGroupMessages(prev: Message | null, curr: Message): boolean {
+    if (!prev) return false;
+    if (prev.author !== curr.author) return false;
+    // Different timestamps = break group
+    if (prev.timestamp && curr.timestamp && prev.timestamp !== curr.timestamp) {
+      return false;
+    }
+    return true;
+  }
+
   private _appendSingleMessage(message: Message): void {
     const container = this.shadowRoot!.querySelector('.history') as HTMLElement;
 
@@ -127,18 +153,19 @@ export class BBMsgHistory extends HTMLElement {
     const timestamp = message.timestamp;
     const config = resolveAuthorConfig(author, this._userAuthors);
 
-    // Check if this can group with the last message
-    // Same author AND (no timestamp conflict)
-    const canGroupWithLast =
-      author === this._lastAuthor &&
-      (!this._lastGroupTimestamp || !timestamp || this._lastGroupTimestamp === timestamp);
+    // Build previous message object for grouping check
+    const prevMessage: Message | null = this._lastAuthor
+      ? { author: this._lastAuthor, text: '', timestamp: this._lastGroupTimestamp }
+      : null;
 
+    // Use unified grouping logic
+    const canGroupWithLast = this._canGroupMessages(prevMessage, message);
     const isFirstFromAuthor = !canGroupWithLast;
     this._lastAuthor = author;
 
     const isSubsequent = !isFirstFromAuthor;
 
-    // Update group timestamp tracking
+    // Update group timestamp tracking (consistent with render())
     if (isFirstFromAuthor) {
       // Start new group
       this._lastGroupTimestamp = timestamp;
@@ -205,15 +232,31 @@ export class BBMsgHistory extends HTMLElement {
 
   disconnectedCallback() {
     this._mutationObserver?.disconnect();
+    clearTimeout(this._debounceTimer);
+    this._cleanupListeners();
+  }
+
+  /**
+   * Track an event listener for cleanup on disconnect
+   */
+  private _addTrackedListener(el: EventTarget, type: string, fn: EventListener): void {
+    el.addEventListener(type, fn);
+    this._scrollListeners.push({ el, type, fn });
+  }
+
+  /**
+   * Remove all tracked event listeners
+   */
+  private _cleanupListeners(): void {
+    this._scrollListeners.forEach(({ el, type, fn }) => {
+      el.removeEventListener(type, fn);
+    });
+    this._scrollListeners = [];
   }
 
   private _setupMutationObserver() {
-    let debounceTimer: ReturnType<typeof setTimeout>;
-    this._mutationObserver = new MutationObserver(() => {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => this.render(), 50);
-    });
-    this._mutationObserver.observe(this, {
+    // Observer was already created in constructor, just need to connect it
+    this._mutationObserver?.observe(this, {
       childList: true,
       characterData: true,
       subtree: true,
@@ -230,20 +273,10 @@ export class BBMsgHistory extends HTMLElement {
       return;
     }
 
-    // Helper: Check if two messages can be grouped (same author, no timestamp conflict)
-    const canGroup = (prev: Message, curr: Message): boolean => {
-      if (prev.author !== curr.author) return false;
-      // Different timestamps = break group
-      if (prev.timestamp && curr.timestamp && prev.timestamp !== curr.timestamp) {
-        return false;
-      }
-      return true;
-    };
-
     // First pass: determine which messages are last in their group
     const lastInGroupFlags: boolean[] = messages.map((msg, i) => {
       const next = messages[i + 1];
-      return !next || !canGroup(msg, next);
+      return !next || !this._canGroupMessages(msg, next);
     });
 
     // Second pass: collect the timestamp for each group
@@ -253,7 +286,7 @@ export class BBMsgHistory extends HTMLElement {
 
     messages.forEach((msg, i) => {
       // Start of a new group
-      if (i === 0 || !canGroup(messages[i - 1], msg)) {
+      if (i === 0 || !this._canGroupMessages(messages[i - 1], msg)) {
         currentGroupTimestamp = msg.timestamp;
       } else if (!currentGroupTimestamp && msg.timestamp) {
         // If no timestamp yet and current msg has one, use it
@@ -275,7 +308,7 @@ export class BBMsgHistory extends HTMLElement {
         const config = resolveAuthorConfig(author, this._userAuthors);
 
         // Determine if this is a new author group (can't group with previous)
-        const isFirstFromAuthor = i === 0 || !canGroup(messages[i - 1], msg);
+        const isFirstFromAuthor = i === 0 || !this._canGroupMessages(messages[i - 1], msg);
         lastAuthor = author;
         const isSubsequent = !isFirstFromAuthor;
 
@@ -311,6 +344,12 @@ export class BBMsgHistory extends HTMLElement {
   }
 
   private _renderFullStructure(messagesHtml: string): void {
+    // Check if we should preserve scroll position before re-rendering
+    const existingContainer = this.shadowRoot!.querySelector('.history') as HTMLElement | null;
+    const wasAtBottom = existingContainer
+      ? existingContainer.scrollHeight - existingContainer.scrollTop - existingContainer.clientHeight < 50
+      : true; // Default to true for initial render
+
     const loadingOverlay = this.hasAttribute('loading')
       ? `<div class="loading-overlay" role="status" aria-label="Loading messages">
           <div class="loading-spinner"></div>
@@ -328,7 +367,7 @@ export class BBMsgHistory extends HTMLElement {
       ${loadingOverlay}
     `;
 
-    this._setupAfterRender();
+    this._setupAfterRender(wasAtBottom);
   }
 
   private _updateContent(historyContainer: HTMLElement, messagesHtml: string): void {
@@ -368,14 +407,16 @@ export class BBMsgHistory extends HTMLElement {
     }
   }
 
-  private _setupAfterRender(): void {
+  private _setupAfterRender(shouldScrollToBottom = true): void {
     requestAnimationFrame(() => {
       const container = this.shadowRoot!.querySelector('.history') as HTMLElement;
       const scrollButton = this.shadowRoot!.querySelector('.scroll-to-bottom') as HTMLButtonElement | null;
       const isInfinite = this.hasAttribute('infinite');
 
       if (container && !isInfinite) {
-        container.scrollTop = container.scrollHeight;
+        if (shouldScrollToBottom) {
+          container.scrollTop = container.scrollHeight;
+        }
         this._setupScrollTracking(container, scrollButton, { skipInitialCheck: true });
       }
 
@@ -450,9 +491,9 @@ export class BBMsgHistory extends HTMLElement {
     }
 
     // Listen for scroll events with passive listener for performance
-    container.addEventListener('scroll', checkScrollPosition, { passive: true });
+    this._addTrackedListener(container, 'scroll', checkScrollPosition);
 
     // Also check on resize
-    window.addEventListener('resize', checkScrollPosition, { passive: true });
+    this._addTrackedListener(window, 'resize', checkScrollPosition);
   }
 }

@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.13.2](https://github.com/bbb0ttle/bb-msg-history/compare/v0.13.1...v0.13.2) (2026-03-06)
+
+
+### Features
+
+* simplify scroll-to-bottom button visibility logic
+  * Button now appears immediately when user scrolls up (not at bottom) and there's overflow content
+  * Removed previous "priming" requirement where user had to scroll up before button would show
+  * New logic: `shouldShow = !isAtBottom && hasOverflow` (simpler and more predictable)
+
 ## [0.13.1](https://github.com/bbb0ttle/bb-msg-history/compare/v0.13.0...v0.13.1) (2026-03-05)
 
 

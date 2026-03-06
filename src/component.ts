@@ -12,9 +12,6 @@ export class BBMsgHistory extends HTMLElement {
   private _lastAuthor = '';
   private _lastGroupTimestamp: string | undefined;
   private _scrollButtonVisible = false;
-  private _userHasScrolledManually = false;
-  private _isProgrammaticScroll = false;
-  private _lastScrollTop = 0;
 
   static get observedAttributes() {
     return ['theme', 'loading', 'hide-scroll-bar', 'infinite', 'hide-scroll-button'];
@@ -176,18 +173,10 @@ export class BBMsgHistory extends HTMLElement {
 
     // Smooth scroll to bottom (skip in infinite mode)
     if (!this.hasAttribute('infinite')) {
-      // Mark this as a programmatic scroll so the scroll handler ignores it
-      this._isProgrammaticScroll = true;
-
       container.scrollTo({
         top: container.scrollHeight,
         behavior: 'smooth',
       });
-
-      // Reset the flag after smooth scroll animation completes (~300ms)
-      setTimeout(() => {
-        this._isProgrammaticScroll = false;
-      }, 300);
 
       // Hide scroll button since we're scrolling to bottom
       if (this._scrollButtonVisible) {
@@ -386,12 +375,7 @@ export class BBMsgHistory extends HTMLElement {
       const isInfinite = this.hasAttribute('infinite');
 
       if (container && !isInfinite) {
-        // Mark as programmatic scroll to prevent triggering user scroll detection
-        this._isProgrammaticScroll = true;
         container.scrollTop = container.scrollHeight;
-        requestAnimationFrame(() => {
-          this._isProgrammaticScroll = false;
-        });
         this._setupScrollTracking(container, scrollButton, { skipInitialCheck: true });
       }
 
@@ -435,24 +419,12 @@ export class BBMsgHistory extends HTMLElement {
     options?: { skipInitialCheck?: boolean }
   ): void {
     const checkScrollPosition = () => {
-      // Ignore programmatic scrolls - they don't indicate user intent
-      if (this._isProgrammaticScroll) return;
-
-      // Mark that user has manually scrolled
-      if (!this._userHasScrolledManually) {
-        this._userHasScrolledManually = true;
-      }
-
-      const currentScrollTop = container.scrollTop;
-      const isScrollingUp = currentScrollTop < this._lastScrollTop;
-      this._lastScrollTop = currentScrollTop;
-
       const threshold = 50; // pixels from bottom
       const isAtBottom =
         container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
       const hasOverflow = container.scrollHeight > container.clientHeight;
-      // Only show button when: user has scrolled, is not at bottom, is scrolling up
-      const shouldShow = !isAtBottom && hasOverflow && this._userHasScrolledManually && isScrollingUp;
+      // Show button when not at bottom and content has overflow
+      const shouldShow = !isAtBottom && hasOverflow;
 
       if (shouldShow !== this._scrollButtonVisible) {
         this._scrollButtonVisible = shouldShow;
@@ -471,9 +443,6 @@ export class BBMsgHistory extends HTMLElement {
         );
       }
     };
-
-    // Initialize last scroll position
-    this._lastScrollTop = container.scrollTop;
 
     // Check initial state unless skipped
     if (!options?.skipInitialCheck) {

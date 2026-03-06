@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.14.0](https://github.com/bbb0ttle/bb-msg-history/compare/v0.13.1...v0.14.0) (2026-03-06)
+
+
+### Features
+
+* simplify scroll button visibility logic ([d27c0ff](https://github.com/bbb0ttle/bb-msg-history/commit/d27c0ff3bfaedc0dda41e2103705617d1145dfcc))
+
 ## [0.13.2](https://github.com/bbb0ttle/bb-msg-history/compare/v0.13.1...v0.13.2) (2026-03-06)
 
 

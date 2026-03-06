@@ -1,19 +1,24 @@
 import type { AuthorOptions, Message } from './types/index.js';
-import { EMPTY_STYLES, LOADING_STYLES, MAIN_STYLES } from './const/styles.js';
 import { parseMessages } from './utils/message-parser.js';
-import { resolveAuthorConfig } from './utils/author-resolver.js';
-import { setupTooltips } from './utils/tooltip.js';
-import { buildMessageRowHtml, setupTooltipForElement } from './utils/message-builder.js';
-import { buildScrollButtonHtml } from './utils/scroll-button.js';
+import { EventTracker } from './utils/event-tracker.js';
+import { MessageProcessor } from './core/message-processor.js';
+import { ScrollManager } from './core/scroll-manager.js';
+import { Renderer } from './core/renderer.js';
 
 export class BBMsgHistory extends HTMLElement {
   private _mutationObserver?: MutationObserver;
+  private _debounceTimer?: ReturnType<typeof setTimeout>;
+
+  // Core modules
+  private _eventTracker = new EventTracker();
+  private _messageProcessor = new MessageProcessor();
+  private _scrollManager: ScrollManager;
+  private _renderer: Renderer;
+
+  // State
   private _userAuthors = new Map<string, AuthorOptions>();
   private _lastAuthor = '';
   private _lastGroupTimestamp: string | undefined;
-  private _scrollButtonVisible = false;
-  private _scrollListeners: Array<{ el: EventTarget; type: string; fn: EventListener }> = [];
-  private _debounceTimer?: ReturnType<typeof setTimeout>;
 
   static get observedAttributes() {
     return ['theme', 'loading', 'hide-scroll-bar', 'infinite', 'hide-scroll-button'];
@@ -22,7 +27,16 @@ export class BBMsgHistory extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
-    // Create MutationObserver once - will be connected in connectedCallback
+
+    // Initialize renderer with shadow root
+    this._renderer = new Renderer(this.shadowRoot!);
+
+    // Initialize scroll manager with callback
+    this._scrollManager = new ScrollManager(this, this.shadowRoot!, this._eventTracker, _ => {
+      // Callback for visibility changes (state tracking if needed)
+    });
+
+    // Create MutationObserver for reactive rendering
     this._mutationObserver = new MutationObserver(() => {
       clearTimeout(this._debounceTimer);
       this._debounceTimer = setTimeout(() => this.render(), 50);
@@ -31,7 +45,7 @@ export class BBMsgHistory extends HTMLElement {
 
   attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null) {
     if (oldValue === newValue) return;
-    if (name === 'theme' || name === 'loading' || name === 'hide-scroll-bar' || name === 'infinite' || name === 'hide-scroll-button') {
+    if (['theme', 'loading', 'hide-scroll-bar', 'infinite', 'hide-scroll-button'].includes(name)) {
       this.render();
     }
   }
@@ -109,119 +123,32 @@ export class BBMsgHistory extends HTMLElement {
    * el.scrollToBottom();  // Scroll with smooth animation
    */
   scrollToBottom(): this {
-    if (this.hasAttribute('infinite')) {
-      return this;
-    }
-
-    const container = this.shadowRoot?.querySelector('.history') as HTMLElement | null;
-    if (!container) {
-      return this;
-    }
-
-    container.scrollTo({
-      top: container.scrollHeight,
-      behavior: 'smooth',
-    });
-
+    this._scrollManager.scrollToBottom();
     return this;
   }
 
   /**
-   * Check if two messages can be grouped (same author, no timestamp conflict)
+   * Internal: Append a single message with incremental DOM update
    */
-  private _canGroupMessages(prev: Message | null, curr: Message): boolean {
-    if (!prev) return false;
-    if (prev.author !== curr.author) return false;
-    // Different timestamps = break group
-    if (prev.timestamp && curr.timestamp && prev.timestamp !== curr.timestamp) {
-      return false;
-    }
-    return true;
-  }
-
   private _appendSingleMessage(message: Message): void {
-    const container = this.shadowRoot!.querySelector('.history') as HTMLElement;
+    const result = this._renderer.appendSingleMessage(message, this._userAuthors, {
+      author: this._lastAuthor,
+      groupTimestamp: this._lastGroupTimestamp,
+    });
 
-    // If empty state or no container, do full render first
-    if (!container) {
+    if (!result.success) {
+      // Container not ready, do full render
       this.render();
       return;
     }
 
-    const author = message.author;
-    const text = message.text;
-    const timestamp = message.timestamp;
-    const config = resolveAuthorConfig(author, this._userAuthors);
+    // Update state
+    this._lastAuthor = result.lastAuthor;
+    this._lastGroupTimestamp = result.lastGroupTimestamp;
 
-    // Build previous message object for grouping check
-    const prevMessage: Message | null = this._lastAuthor
-      ? { author: this._lastAuthor, text: '', timestamp: this._lastGroupTimestamp }
-      : null;
-
-    // Use unified grouping logic
-    const canGroupWithLast = this._canGroupMessages(prevMessage, message);
-    const isFirstFromAuthor = !canGroupWithLast;
-    this._lastAuthor = author;
-
-    const isSubsequent = !isFirstFromAuthor;
-
-    // Update group timestamp tracking (consistent with render())
-    if (isFirstFromAuthor) {
-      // Start new group
-      this._lastGroupTimestamp = timestamp;
-    } else if (!this._lastGroupTimestamp && timestamp) {
-      // If no timestamp in group yet and current has one, use it
-      this._lastGroupTimestamp = timestamp;
-    }
-
-    // When appending, we assume this IS the last in group (for now)
-    // If another message from same author comes, we'll re-render
-    const isLastInGroup = true;
-    const groupTimestamp = this._lastGroupTimestamp;
-
-    // Use utility function to build message HTML
-    const msgHtml = buildMessageRowHtml(
-      author,
-      text,
-      config,
-      isSubsequent,
-      groupTimestamp,
-      isLastInGroup
-    );
-
-    // Append to container
-    container.insertAdjacentHTML('beforeend', msgHtml);
-
-    // Setup tooltip for new element using utility function
-    const newWrapper = container.lastElementChild?.querySelector('.avatar-wrapper');
-    if (newWrapper) {
-      setupTooltipForElement(newWrapper);
-    }
-
-    // Smooth scroll to bottom (skip in infinite mode)
+    // Scroll to bottom (skip in infinite mode)
     if (!this.hasAttribute('infinite')) {
-      container.scrollTo({
-        top: container.scrollHeight,
-        behavior: 'smooth',
-      });
-
-      // Hide scroll button since we're scrolling to bottom
-      if (this._scrollButtonVisible) {
-        this._scrollButtonVisible = false;
-        const scrollButton = this.shadowRoot!.querySelector('.scroll-to-bottom') as HTMLButtonElement | null;
-        if (scrollButton) {
-          scrollButton.classList.remove('visible');
-        }
-
-        // Dispatch hide event (always, regardless of button visibility)
-        this.dispatchEvent(
-          new CustomEvent('bb-scrollbuttonhide', {
-            bubbles: true,
-            composed: true,
-            detail: { visible: false }
-          })
-        );
-      }
+      this._scrollManager.scrollToBottom();
     }
   }
 
@@ -233,29 +160,10 @@ export class BBMsgHistory extends HTMLElement {
   disconnectedCallback() {
     this._mutationObserver?.disconnect();
     clearTimeout(this._debounceTimer);
-    this._cleanupListeners();
-  }
-
-  /**
-   * Track an event listener for cleanup on disconnect
-   */
-  private _addTrackedListener(el: EventTarget, type: string, fn: EventListener): void {
-    el.addEventListener(type, fn);
-    this._scrollListeners.push({ el, type, fn });
-  }
-
-  /**
-   * Remove all tracked event listeners
-   */
-  private _cleanupListeners(): void {
-    this._scrollListeners.forEach(({ el, type, fn }) => {
-      el.removeEventListener(type, fn);
-    });
-    this._scrollListeners = [];
+    this._eventTracker.cleanup();
   }
 
   private _setupMutationObserver() {
-    // Observer was already created in constructor, just need to connect it
     this._mutationObserver?.observe(this, {
       childList: true,
       characterData: true,
@@ -269,231 +177,41 @@ export class BBMsgHistory extends HTMLElement {
     if (messages.length === 0) {
       this._lastAuthor = '';
       this._lastGroupTimestamp = undefined;
-      this._renderEmpty();
+      this._renderer.renderEmpty(this.hasAttribute('loading'));
       return;
     }
 
-    // First pass: determine which messages are last in their group
-    const lastInGroupFlags: boolean[] = messages.map((msg, i) => {
-      const next = messages[i + 1];
-      return !next || !this._canGroupMessages(msg, next);
-    });
+    // Process messages (single-pass algorithm)
+    const { processed, lastAuthor, lastGroupTimestamp } = this._messageProcessor.process(messages);
 
-    // Second pass: collect the timestamp for each group
-    // Use the first non-empty timestamp in the group
-    const groupTimestamps = new Map<number, string | undefined>();
-    let currentGroupTimestamp: string | undefined;
-
-    messages.forEach((msg, i) => {
-      // Start of a new group
-      if (i === 0 || !this._canGroupMessages(messages[i - 1], msg)) {
-        currentGroupTimestamp = msg.timestamp;
-      } else if (!currentGroupTimestamp && msg.timestamp) {
-        // If no timestamp yet and current msg has one, use it
-        currentGroupTimestamp = msg.timestamp;
-      }
-
-      // If this is the last message in the group, save the timestamp
-      if (lastInGroupFlags[i]) {
-        groupTimestamps.set(i, currentGroupTimestamp);
-        currentGroupTimestamp = undefined;
-      }
-    });
-
-    // Third pass: build HTML
-    let lastAuthor = '';
-    const messagesHtml = messages
-      .map((msg, i) => {
-        const { author, text } = msg;
-        const config = resolveAuthorConfig(author, this._userAuthors);
-
-        // Determine if this is a new author group (can't group with previous)
-        const isFirstFromAuthor = i === 0 || !this._canGroupMessages(messages[i - 1], msg);
-        lastAuthor = author;
-        const isSubsequent = !isFirstFromAuthor;
-
-        // Get timestamp if this is the last in group
-        const isLastInGroup = lastInGroupFlags[i];
-        const groupTimestamp = groupTimestamps.get(i);
-
-        // Use utility function to build message HTML
-        return buildMessageRowHtml(
-          author,
-          text,
-          config,
-          isSubsequent,
-          groupTimestamp,
-          isLastInGroup
-        );
-      })
-      .join('');
-
+    // Update state
     this._lastAuthor = lastAuthor;
+    this._lastGroupTimestamp = lastGroupTimestamp;
 
-    // Check if we need to create or update the structure
-    const historyContainer = this.shadowRoot!.querySelector('.history') as HTMLElement;
-    const needsFullSetup = !historyContainer;
-
-    if (needsFullSetup) {
-      // First render - create full structure
-      this._renderFullStructure(messagesHtml);
-    } else {
-      // Update only - preserve DOM structure, just update content
-      this._updateContent(historyContainer, messagesHtml);
-    }
-  }
-
-  private _renderFullStructure(messagesHtml: string): void {
-    // Check if we should preserve scroll position before re-rendering
-    const existingContainer = this.shadowRoot!.querySelector('.history') as HTMLElement | null;
-    const wasAtBottom = existingContainer
-      ? existingContainer.scrollHeight - existingContainer.scrollTop - existingContainer.clientHeight < 50
-      : true; // Default to true for initial render
-
-    const loadingOverlay = this.hasAttribute('loading')
-      ? `<div class="loading-overlay" role="status" aria-label="Loading messages">
-          <div class="loading-spinner"></div>
-        </div>`
-      : '';
-
+    // Render messages
+    const isLoading = this.hasAttribute('loading');
     const hideScrollButton = this.hasAttribute('hide-scroll-button');
+    const { wasAtBottom } = this._renderer.render(
+      processed,
+      this._userAuthors,
+      isLoading,
+      hideScrollButton
+    );
 
-    this.shadowRoot!.innerHTML = `
-      <style>${MAIN_STYLES}${LOADING_STYLES}</style>
-      <div class="history" role="log" aria-live="polite" aria-label="Message history">
-        ${messagesHtml}
-      </div>
-      ${hideScrollButton ? '' : buildScrollButtonHtml()}
-      ${loadingOverlay}
-    `;
-
+    // Setup scroll tracking and other post-render tasks
     this._setupAfterRender(wasAtBottom);
-  }
-
-  private _updateContent(historyContainer: HTMLElement, messagesHtml: string): void {
-    // Preserve scroll position before update
-    const scrollContainer = historyContainer;
-    const wasAtBottom =
-      scrollContainer.scrollHeight - scrollContainer.scrollTop - scrollContainer.clientHeight < 50;
-
-    // Update messages content only
-    historyContainer.innerHTML = messagesHtml;
-
-    // Update loading overlay
-    this._updateLoadingOverlay();
-
-    // Restore scroll position or scroll to bottom if we were there
-    if (wasAtBottom) {
-      scrollContainer.scrollTop = scrollContainer.scrollHeight;
-    }
-
-    // Re-setup tooltips for new content
-    setupTooltips(this.shadowRoot!);
-  }
-
-  private _updateLoadingOverlay(): void {
-    const existingOverlay = this.shadowRoot!.querySelector('.loading-overlay');
-    const shouldShow = this.hasAttribute('loading');
-
-    if (shouldShow && !existingOverlay) {
-      const overlay = document.createElement('div');
-      overlay.className = 'loading-overlay';
-      overlay.setAttribute('role', 'status');
-      overlay.setAttribute('aria-label', 'Loading messages');
-      overlay.innerHTML = '<div class="loading-spinner"></div>';
-      this.shadowRoot!.appendChild(overlay);
-    } else if (!shouldShow && existingOverlay) {
-      existingOverlay.remove();
-    }
   }
 
   private _setupAfterRender(shouldScrollToBottom = true): void {
     requestAnimationFrame(() => {
-      const container = this.shadowRoot!.querySelector('.history') as HTMLElement;
-      const scrollButton = this.shadowRoot!.querySelector('.scroll-to-bottom') as HTMLButtonElement | null;
+      const container = this._renderer.getHistoryContainer();
+      const scrollButton = this._renderer.getScrollButton();
       const isInfinite = this.hasAttribute('infinite');
 
       if (container && !isInfinite) {
-        if (shouldScrollToBottom) {
-          container.scrollTop = container.scrollHeight;
-        }
-        this._setupScrollTracking(container, scrollButton, { skipInitialCheck: true });
+        // Initialize scroll manager
+        this._scrollManager.init(container, scrollButton, shouldScrollToBottom);
       }
-
-      if (scrollButton && !isInfinite) {
-        scrollButton.addEventListener('click', () => {
-          container?.scrollTo({
-            top: container.scrollHeight,
-            behavior: 'smooth',
-          });
-        });
-      }
-
-      setupTooltips(this.shadowRoot!);
     });
-  }
-
-  private _renderEmpty() {
-    const isLoading = this.hasAttribute('loading');
-
-    if (isLoading) {
-      // Show loading overlay with minimum height for better appearance
-      this.shadowRoot!.innerHTML = `
-        <style>${EMPTY_STYLES}${LOADING_STYLES}</style>
-        <div style="position: relative; min-height: 120px;">
-          <div class="loading-overlay" role="status" aria-label="Loading messages">
-            <div class="loading-spinner"></div>
-          </div>
-        </div>
-      `;
-    } else {
-      this.shadowRoot!.innerHTML = `
-        <style>${EMPTY_STYLES}</style>
-        <div class="empty-state">No messages</div>
-      `;
-    }
-  }
-
-  private _setupScrollTracking(
-    container: HTMLElement,
-    button: HTMLButtonElement | null,
-    options?: { skipInitialCheck?: boolean }
-  ): void {
-    const checkScrollPosition = () => {
-      const threshold = 50; // pixels from bottom
-      const isAtBottom =
-        container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
-      const hasOverflow = container.scrollHeight > container.clientHeight;
-      // Show button when not at bottom and content has overflow
-      const shouldShow = !isAtBottom && hasOverflow;
-
-      if (shouldShow !== this._scrollButtonVisible) {
-        this._scrollButtonVisible = shouldShow;
-        // Only toggle button visibility if button exists
-        if (button) {
-          button.classList.toggle('visible', shouldShow);
-        }
-
-        // Dispatch custom event (always, regardless of button visibility)
-        this.dispatchEvent(
-          new CustomEvent(shouldShow ? 'bb-scrollbuttonshow' : 'bb-scrollbuttonhide', {
-            bubbles: true,
-            composed: true,
-            detail: { visible: shouldShow }
-          })
-        );
-      }
-    };
-
-    // Check initial state unless skipped
-    if (!options?.skipInitialCheck) {
-      checkScrollPosition();
-    }
-
-    // Listen for scroll events with passive listener for performance
-    this._addTrackedListener(container, 'scroll', checkScrollPosition);
-
-    // Also check on resize
-    this._addTrackedListener(window, 'resize', checkScrollPosition);
   }
 }

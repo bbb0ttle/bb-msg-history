@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.1](https://github.com/bbb0ttle/bb-msg-history/compare/v0.14.0...v0.14.1) (2026-03-06)
+
+
+### Bug Fixes
+
+* resolve memory leaks, double rendering and state inconsistencies ([c8d9aa3](https://github.com/bbb0ttle/bb-msg-history/commit/c8d9aa36f8dc3166d0a6aa1d06b41f0a28112bc3))
+
 # [0.14.0](https://github.com/bbb0ttle/bb-msg-history/compare/v0.13.1...v0.14.0) (2026-03-06)
 
 

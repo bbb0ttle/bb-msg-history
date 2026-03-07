@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { parseMessages } from '../src/utils/message-parser.js';
+import { DefaultMessageParser } from '../src/parsers/default-parser.js';
+
+const parseMessages = (input: string | null) => new DefaultMessageParser().parse(input);
 
 describe('parseMessages', () => {
   describe('basic parsing (no timestamp)', () => {

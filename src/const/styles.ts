@@ -278,14 +278,14 @@ export const MAIN_STYLES = `
     }
 
     .scroll-to-bottom {
-      width: 32px;
-      height: 32px;
+      width: 40px;
+      height: 40px;
       bottom: 12px;
     }
 
     .scroll-to-bottom svg {
-      width: 18px;
-      height: 18px;
+      width: 24px;
+      height: 24px;
     }
   }
 

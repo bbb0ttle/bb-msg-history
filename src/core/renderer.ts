@@ -2,9 +2,8 @@ import type { AuthorOptions, Message } from '../types/index.js';
 import type { ProcessedMessage } from './message-processor.js';
 import { EMPTY_STYLES, LOADING_STYLES, MAIN_STYLES } from '../const/styles.js';
 import { resolveAuthorConfig } from '../utils/author-resolver.js';
-import { buildMessageRowHtml, setupTooltipForElement } from '../utils/message-builder.js';
+import { buildMessageRowHtml } from '../utils/message-builder.js';
 import { buildScrollButtonHtml } from '../utils/scroll-button.js';
-import { setupTooltips } from '../utils/tooltip.js';
 
 /**
  * State for incremental message appending
@@ -149,9 +148,6 @@ export class Renderer {
       scrollContainer.scrollTop = scrollContainer.scrollHeight;
     }
 
-    // Re-setup tooltips for new content
-    setupTooltips(this.shadowRoot);
-
     return { wasAtBottom };
   }
 
@@ -204,12 +200,6 @@ export class Renderer {
     );
 
     container.insertAdjacentHTML('beforeend', msgHtml);
-
-    // Setup tooltip for new element
-    const newWrapper = container.lastElementChild?.querySelector('.avatar-wrapper');
-    if (newWrapper) {
-      setupTooltipForElement(newWrapper);
-    }
 
     return {
       success: true,

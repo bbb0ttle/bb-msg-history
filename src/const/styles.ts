@@ -160,7 +160,6 @@ export const MAIN_STYLES = `
     background: #ffffff;
     border-radius: 50%;
     overflow: hidden;
-    cursor: help;
   }
 
   .avatar-wrapper--hidden {
@@ -181,38 +180,6 @@ export const MAIN_STYLES = `
   .avatar svg {
     width: 100%;
     height: 100%;
-  }
-
-  /* Hover tooltip */
-  .avatar-tooltip {
-    position: fixed;
-    padding: 0.25rem 0.5rem;
-    background: ${THEME.gray[800]};
-    color: ${THEME.gray[50]};
-    font-size: 0.75rem;
-    border-radius: 0.25rem;
-    white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    z-index: 10;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-  }
-
-  .avatar-tooltip::after {
-    content: '';
-    position: absolute;
-    top: calc(100% - 1px);
-    left: 50%;
-    transform: translateX(-50%);
-    border: 4px solid transparent;
-    border-top-color: ${THEME.gray[800]};
-  }
-
-  .avatar-wrapper:hover .avatar-tooltip {
-    opacity: 1;
-    visibility: visible;
   }
 
   /* Message content area */

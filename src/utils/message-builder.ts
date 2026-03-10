@@ -10,7 +10,6 @@ export function buildAvatarHtml(author: string, config: AuthorConfig, showAvatar
     <div class="avatar-wrapper ${showAvatar ? '' : 'avatar-wrapper--hidden'}"
          data-author="${escapeHtml(author)}">
       <div class="avatar">${config.avatar}</div>
-      <div class="avatar-tooltip">${escapeHtml(author)}</div>
     </div>
   `;
 }
@@ -67,18 +66,4 @@ export function buildMessageRowHtml(
       ${side === 'right' ? avatarHtml : ''}
     </div>
   `;
-}
-
-/**
- * Setup tooltip for a single avatar wrapper element
- */
-export function setupTooltipForElement(wrapper: Element): void {
-  wrapper.addEventListener('mouseenter', () => {
-    const tooltip = wrapper.querySelector('.avatar-tooltip') as HTMLElement;
-    if (!tooltip) return;
-    const rect = wrapper.getBoundingClientRect();
-    const tooltipRect = tooltip.getBoundingClientRect();
-    tooltip.style.left = `${rect.left + rect.width / 2 - tooltipRect.width / 2}px`;
-    tooltip.style.top = `${rect.top - tooltipRect.height - 8}px`;
-  });
 }

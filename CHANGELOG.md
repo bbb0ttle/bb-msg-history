@@ -1,5 +1,24 @@
 # Changelog
 
+# [3.0.0](https://github.com/bbb0ttle/bb-msg-history/compare/v1.0.0...v3.0.0) (2026-03-10)
+
+
+### Bug Fixes
+
+* increase scroll-to-bottom button and SVG icon size on mobile ([a22b8fc](https://github.com/bbb0ttle/bb-msg-history/commit/a22b8fc9b629c77b1af8d2ff5d894bf3e1943fa5))
+
+
+### Features
+
+* remove avatar hover tooltips ([f54d284](https://github.com/bbb0ttle/bb-msg-history/commit/f54d2844cd5088259b0f5194fa71ba8027c45433))
+
+
+### BREAKING CHANGES
+
+* Avatar hover tooltips have been removed
+
+Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+
 # [1.0.0](https://github.com/bbb0ttle/bb-msg-history/compare/v0.14.1...v1.0.0) (2026-03-06)
 
 ## [0.14.1](https://github.com/bbb0ttle/bb-msg-history/compare/v0.14.0...v0.14.1) (2026-03-06)
